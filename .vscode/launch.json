@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: Server",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "Next.js: Client",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "Next Run",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "internalConsoleOptions": "openOnSessionStart",
+      "serverReadyAction": {
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    }
+  ]
+}
