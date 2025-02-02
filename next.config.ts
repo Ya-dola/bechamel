@@ -1,7 +1,12 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // To generate static pages on build
+  output: 'export',
+
+  // Paths for when Hosting
+  // basePath: '/bechamel',
+  // assetPrefix: '/bechamel',
 };
 
 export default nextConfig;
