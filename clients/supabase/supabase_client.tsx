@@ -59,16 +59,34 @@ function SupabaseClient() {
       {/* Title */}
       <h1 className='text-3xl font-bold'>Supabase Data Fetcher</h1>
 
-      {/* Go Home Button */}
-      <Button
-        component={Link}
-        href='/'
-        variant='filled'
-        color='blue'
-        className='mb-4'
-      >
-        Home
-      </Button>
+      {/* Navigation Buttons */}
+      <div className='flex flex-wrap gap-4'>
+        <Button
+          component={Link}
+          href='/'
+          variant='filled'
+          color='blue'
+          className='mb-4'
+        >
+          Home
+        </Button>
+        <Button
+          component={Link}
+          href='/insert_category'
+          variant='outline'
+          color='green'
+        >
+          Insert Category
+        </Button>
+        <Button
+          component={Link}
+          href='/insert_recipe'
+          variant='outline'
+          color='green'
+        >
+          Insert Recipe
+        </Button>
+      </div>
 
       {/* Top Controls: Table Selection + Refresh Button + Pagination Toggle */}
       <div className='flex w-full max-w-lg items-center justify-between gap-4'>
