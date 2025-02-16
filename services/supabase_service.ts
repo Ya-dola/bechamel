@@ -104,7 +104,8 @@ export async function softDeleteRecords({ table, ids }: DeleteParams) {
   const { data, error } = await supabase
     .from(table)
     .update({ deleted_at: nowUtc })
-    .in('id', ids);
+    .in('id', ids)
+    .select();
   if (error) throw error;
   return data;
 }
@@ -113,7 +114,11 @@ export async function softDeleteRecords({ table, ids }: DeleteParams) {
  * Hard delete records by removing them from the table.
  */
 export async function hardDeleteRecords({ table, ids }: DeleteParams) {
-  const { data, error } = await supabase.from(table).delete().in('id', ids);
+  const { data, error } = await supabase
+    .from(table)
+    .delete()
+    .in('id', ids)
+    .select();
   if (error) throw error;
   return data;
 }
@@ -121,7 +126,10 @@ export async function hardDeleteRecords({ table, ids }: DeleteParams) {
  * Insert a new category.
  */
 export async function insertCategory(category: { name: string }) {
-  const { data, error } = await supabase.from('categories').insert(category);
+  const { data, error } = await supabase
+    .from('categories')
+    .insert(category)
+    .select();
   if (error) throw error;
   return data;
 }
@@ -169,14 +177,15 @@ export interface RecipeInput {
 /**
  * Insert a new recipe.
  * Make sure your Supabase function returns a valid record.
- */
-export async function insertRecipe(
+ */ export async function insertRecipe(
   recipe: RecipeInput,
 ): Promise<RecipeRecord[]> {
-  const { data, error } = await supabase.from('recipes').insert(recipe);
+  const { data, error } = await supabase
+    .from('recipes')
+    .insert(recipe)
+    .select(); // Add .select() to return the inserted records
   if (error) throw error;
-  // Here we assume Supabase returns an array of inserted rows.
-  return (data ?? []) as RecipeRecord[];
+  return data as RecipeRecord[];
 }
 
 /**
@@ -187,7 +196,10 @@ export async function insertRecipeCategories(
   category_ids: number[],
 ) {
   const rows = category_ids.map((category_id) => ({ recipe_id, category_id }));
-  const { data, error } = await supabase.from('recipe_categories').insert(rows);
+  const { data, error } = await supabase
+    .from('recipe_categories')
+    .insert(rows)
+    .select();
   if (error) throw error;
   return data;
 }

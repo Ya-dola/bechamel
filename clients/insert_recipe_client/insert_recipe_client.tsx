@@ -41,13 +41,13 @@ interface RecipeFormValues {
   directions: DirectionStep[];
   images: FileList | null;
   videos: null;
-  categories: number[]; // selected category IDs for join table only
+  categories: number[]; // Selected category IDs (for join table)
 }
 
 function InsertRecipe() {
   const { register, handleSubmit, control, reset } = useForm<RecipeFormValues>({
     defaultValues: {
-      // Replace this with a valid user id from your auth.users table.
+      // Use a valid user_id from your auth.users table.
       user_id: process.env.NEXT_PUBLIC_TEST_USER_ID ?? '',
       name: '',
       description: '',
@@ -99,6 +99,7 @@ function InsertRecipe() {
   const router = useRouter();
 
   const onSubmit = async (values: RecipeFormValues) => {
+    // Process image uploads if files are selected.
     let imageUrls: string[] | null = null;
     if (values.images && values.images.length > 0) {
       const filesArray = Array.from(values.images);
@@ -111,10 +112,10 @@ function InsertRecipe() {
       }
     }
 
-    // Exclude categories from the recipe payload.
+    // Extract categories separately so they're not part of the payload.
     const { categories, ...recipeData } = values;
 
-    // Auto-calculate total_time from prep_time and cook_time.
+    // Auto-calculate total_time as prep_time + cook_time (default cook_time to 0 if undefined)
     const computedTotalTime = values.prep_time + (values.cook_time ?? 0);
 
     const recipePayload = {
@@ -131,6 +132,7 @@ function InsertRecipe() {
       const newRecipe = Array.isArray(recipeDataResponse)
         ? recipeDataResponse[0]
         : recipeDataResponse;
+
       if (categories.length > 0 && newRecipe?.id) {
         await insertRecipeCategories(newRecipe.id, categories);
       }
