@@ -90,3 +90,29 @@ export const fetchAll = async ({
 
   return { data, count };
 };
+export interface DeleteParams {
+  table: string;
+  ids: (string | number)[];
+}
+
+/**
+ * Soft delete records by updating the `deleted_at` column.
+ */
+export async function softDeleteRecords({ table, ids }: DeleteParams) {
+  const nowUtc = new Date().toISOString();
+  const { data, error } = await supabase
+    .from(table)
+    .update({ deleted_at: nowUtc })
+    .in('id', ids);
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Hard delete records by removing them from the table.
+ */
+export async function hardDeleteRecords({ table, ids }: DeleteParams) {
+  const { data, error } = await supabase.from(table).delete().in('id', ids);
+  if (error) throw error;
+  return data;
+}
