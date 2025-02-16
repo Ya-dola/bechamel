@@ -1,6 +1,8 @@
 'use client';
 
 import { useFetchAll } from '@/hooks/useFetchAll';
+import { useSoftDelete } from '@/hooks/useSoftDelete';
+import { useHardDelete } from '@/hooks/useHardDelete';
 import { useState, useEffect } from 'react';
 import { Button, Switch, SegmentedControl } from '@mantine/core';
 import { Tables } from '@/models/database.types';
@@ -27,14 +29,30 @@ function SupabaseClient() {
     usePagination,
   });
 
-  // Ensure count is a safe number
+  // Soft delete hook for the selected table
+  const { mutate: softDelete, isPending: isDeleting } =
+    useSoftDelete(selectedTable);
+
+  // Hard delete hook for the selected table
+  const { mutate: hardDelete, isPending: isHardDeleting } =
+    useHardDelete(selectedTable);
+
+  // Ensure count is safe
   const count = data?.count ?? 0;
   const items = data?.data ?? [];
 
-  // Refetch data when the selected table changes
+  // Refetch data when table changes
   useEffect(() => {
     refetch();
   }, [selectedTable, refetch]);
+
+  const handleDelete = (id: string | number) => {
+    softDelete([id]);
+  };
+
+  const handleDeleteHard = (id: string | number) => {
+    hardDelete([id]);
+  };
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen px-6 py-12 space-y-6 bg-black text-white'>
@@ -100,12 +118,36 @@ function SupabaseClient() {
             (item: Tables<'recipes'> | Tables<'categories'>, index: number) => (
               <li
                 key={'id' in item ? item.id : index}
-                className='p-4 bg-black border border-white rounded-lg shadow-md'
+                className='p-4 bg-black border border-white rounded-lg shadow-md flex flex-col'
               >
-                <p className='text-sm text-gray-400'>ID: {item.id}</p>
-                <strong className='text-lg text-white'>
-                  {'name' in item ? item.name : `Row ${index + 1}`}
-                </strong>
+                <div className='flex justify-between items-center'>
+                  <div>
+                    <p className='text-sm text-gray-400'>ID: {item.id}</p>
+                    <strong className='text-lg text-white'>
+                      {'name' in item ? item.name : `Row ${index + 1}`}
+                    </strong>
+                  </div>
+                  <div className='flex gap-4'>
+                    <Button
+                      variant='outline'
+                      color='red'
+                      size='xs'
+                      disabled={isDeleting}
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Soft Delete
+                    </Button>
+                    <Button
+                      variant='filled'
+                      color='red'
+                      size='xs'
+                      disabled={isHardDeleting}
+                      onClick={() => handleDeleteHard(item.id)}
+                    >
+                      Hard Delete
+                    </Button>
+                  </div>
+                </div>
               </li>
             ),
           )
