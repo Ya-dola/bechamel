@@ -1,3 +1,4 @@
+import { Json } from '@/models/json';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
@@ -115,4 +116,90 @@ export async function hardDeleteRecords({ table, ids }: DeleteParams) {
   const { data, error } = await supabase.from(table).delete().in('id', ids);
   if (error) throw error;
   return data;
+}
+/**
+ * Insert a new category.
+ */
+export async function insertCategory(category: { name: string }) {
+  const { data, error } = await supabase.from('categories').insert(category);
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * RecipeRecord represents a row from the recipes table.
+ */
+export interface RecipeRecord {
+  id: string;
+  user_id: string;
+  name: string;
+  description?: string;
+  ingredients: Json;
+  directions?: Json;
+  prep_time: number;
+  cook_time?: number;
+  total_time?: number;
+  servings?: number;
+  shared?: boolean;
+  images?: Json;
+  videos?: Json;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string | null;
+}
+
+/**
+ * RecipeInput represents the data needed to insert a recipe.
+ */
+export interface RecipeInput {
+  user_id: string;
+  name: string;
+  description?: string;
+  ingredients: Json;
+  directions?: Json;
+  prep_time: number;
+  cook_time?: number;
+  total_time?: number;
+  servings?: number;
+  shared?: boolean;
+  images?: Json;
+  videos?: Json;
+}
+
+/**
+ * Insert a new recipe.
+ * Make sure your Supabase function returns a valid record.
+ */
+export async function insertRecipe(
+  recipe: RecipeInput,
+): Promise<RecipeRecord[]> {
+  const { data, error } = await supabase.from('recipes').insert(recipe);
+  if (error) throw error;
+  // Here we assume Supabase returns an array of inserted rows.
+  return (data ?? []) as RecipeRecord[];
+}
+
+/**
+ * Insert rows into the recipe_categories join table.
+ */
+export async function insertRecipeCategories(
+  recipe_id: string,
+  category_ids: number[],
+) {
+  const rows = category_ids.map((category_id) => ({ recipe_id, category_id }));
+  const { data, error } = await supabase.from('recipe_categories').insert(rows);
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Dummy uploadImages function.
+ */
+export async function uploadImages(files: File[]): Promise<string[]> {
+  // In production, upload files to your storage bucket.
+  // Here we simulate an upload delay and return dummy URLs.
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return files.map(
+    (file) => `https://example.com/uploads/${encodeURIComponent(file.name)}`,
+  );
 }
