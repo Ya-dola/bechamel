@@ -58,6 +58,10 @@ export async function fetchAll({
       case 'is':
         query = query.is(column, value);
         break;
+      case 'in':
+        // Make sure value is an array when using the "in" operator.
+        query = query.in(column, value as (string | number | boolean)[]);
+        break;
       default:
         throw new Error(`Unsupported filter operator: ${operator}`);
     }
@@ -71,7 +75,7 @@ export async function fetchAll({
   }
 
   // Debugging: Check if query is valid before executing
-  console.log('Executing Query:', query);
+  // console.log('Executing Query:', query);
 
   const { data, error, count } = await query;
 
@@ -123,10 +127,17 @@ export async function fetch<T>(
       case 'is':
         query = query.is(column, value);
         break;
+      case 'in':
+        // Make sure value is an array when using the "in" operator.
+        query = query.in(column, value as (string | number | boolean)[]);
+        break;
       default:
         throw new Error(`Unsupported filter operator: ${operator}`);
     }
   });
+
+  // Debugging: Check if query is valid before executing
+  // console.log('Executing Query:', query);
 
   const { data, error } = await query.single();
   if (error) throw error;
