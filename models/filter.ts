@@ -1,6 +1,7 @@
 export interface Filter {
   column: string;
-  value: string | number | boolean | null;
+  // Allow an array of values for the "in" operator.
+  value: string | number | boolean | null | (string | number | boolean)[];
   operator?:
     | 'eq'
     | 'not'
@@ -10,5 +11,6 @@ export interface Filter {
     | 'gte'
     | 'like'
     | 'ilike'
-    | 'is';
+    | 'is'
+    | 'in';
 }
