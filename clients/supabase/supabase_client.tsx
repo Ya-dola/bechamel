@@ -1,12 +1,13 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button, Switch, SegmentedControl } from '@mantine/core';
 import { useFetchAll } from '@/hooks/useFetchAll';
 import { useSoftDelete } from '@/hooks/useSoftDelete';
 import { useHardDelete } from '@/hooks/useHardDelete';
-import { useState, useEffect } from 'react';
-import { Button, Switch, SegmentedControl } from '@mantine/core';
 import { Tables } from '@/models/database.types';
-import Link from 'next/link';
 
 const TABLE_OPTIONS = [
   { label: 'Recipes', value: 'recipes' },
@@ -14,6 +15,7 @@ const TABLE_OPTIONS = [
 ] as const;
 
 function SupabaseClient() {
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [usePagination, setUsePagination] = useState(true);
   const [selectedTable, setSelectedTable] = useState<'recipes' | 'categories'>(
@@ -133,50 +135,64 @@ function SupabaseClient() {
       <ul className='w-full max-w-2xl space-y-3'>
         {items.length > 0 ? (
           items.map(
-            (item: Tables<'recipes'> | Tables<'categories'>, index: number) => (
-              <li
-                key={'id' in item ? item.id : index}
-                className='p-4 bg-black border border-white rounded-lg shadow-md flex flex-col'
-              >
-                <div className='flex justify-between items-center'>
-                  <div>
-                    <p className='text-sm text-gray-400'>ID: {item.id}</p>
-                    <strong className='text-lg text-white'>
-                      {'name' in item ? item.name : `Row ${index + 1}`}
-                    </strong>
+            (item: Tables<'recipes'> | Tables<'categories'>) =>
+              'name' in item && (
+                <li
+                  key={item.id}
+                  className='p-4 bg-black border border-white rounded-lg shadow-md flex flex-col hover:cursor-pointer hover:bg-gray-800'
+                  onClick={() =>
+                    selectedTable === 'recipes' &&
+                    router.push(`/view_recipe?id=${item.id}`)
+                  }
+                >
+                  <div className='flex justify-between items-center'>
+                    <div>
+                      <p className='text-sm text-gray-400'>ID: {item.id}</p>
+                      <strong className='text-lg text-white'>
+                        {item.name}
+                      </strong>
+                    </div>
+                    <div className='flex gap-4'>
+                      {selectedTable === 'recipes' && (
+                        <Button
+                          component={Link}
+                          href={`/update_recipe?id=${item.id}`}
+                          variant='outline'
+                          color='cyan'
+                          size='xs'
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Update
+                        </Button>
+                      )}
+                      <Button
+                        variant='outline'
+                        color='red'
+                        size='xs'
+                        disabled={isDeleting}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(item.id);
+                        }}
+                      >
+                        Soft Delete
+                      </Button>
+                      <Button
+                        variant='filled'
+                        color='red'
+                        size='xs'
+                        disabled={isHardDeleting}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteHard(item.id);
+                        }}
+                      >
+                        Hard Delete
+                      </Button>
+                    </div>
                   </div>
-                  <div className='flex gap-4'>
-                    <Button
-                      component={Link}
-                      href={`/update_recipe?id=${item.id}`}
-                      variant='outline'
-                      color='cyan'
-                      size='xs'
-                    >
-                      Update
-                    </Button>
-                    <Button
-                      variant='outline'
-                      color='red'
-                      size='xs'
-                      disabled={isDeleting}
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Soft Delete
-                    </Button>
-                    <Button
-                      variant='filled'
-                      color='red'
-                      size='xs'
-                      disabled={isHardDeleting}
-                      onClick={() => handleDeleteHard(item.id)}
-                    >
-                      Hard Delete
-                    </Button>
-                  </div>
-                </div>
-              </li>
-            ),
+                </li>
+              ),
           )
         ) : (
           <li className='p-4 bg-black border border-white rounded-lg shadow-md flex items-center justify-center'>
