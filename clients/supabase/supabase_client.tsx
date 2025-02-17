@@ -130,7 +130,7 @@ function SupabaseClient() {
       {error && <p className='text-red-500'>{error.message}</p>}
 
       {/* Display Data or No Data Card */}
-      <ul className='w-full max-w-lg space-y-3'>
+      <ul className='w-full max-w-2xl space-y-3'>
         {items.length > 0 ? (
           items.map(
             (item: Tables<'recipes'> | Tables<'categories'>, index: number) => (
@@ -146,6 +146,15 @@ function SupabaseClient() {
                     </strong>
                   </div>
                   <div className='flex gap-4'>
+                    <Button
+                      component={Link}
+                      href={`/update_recipe?id=${item.id}`}
+                      variant='outline'
+                      color='cyan'
+                      size='xs'
+                    >
+                      Update
+                    </Button>
                     <Button
                       variant='outline'
                       color='red'
