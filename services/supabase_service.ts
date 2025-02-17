@@ -1,3 +1,4 @@
+import { Filter } from '@/models/filter';
 import { Json } from '@/models/json';
 import { createClient } from '@supabase/supabase-js';
 
@@ -12,20 +13,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface FetchAllParams {
   table: string;
-  filters?: {
-    column: string;
-    value: string | number | boolean | null;
-    operator?:
-      | 'eq'
-      | 'not'
-      | 'lt'
-      | 'lte'
-      | 'gt'
-      | 'gte'
-      | 'like'
-      | 'ilike'
-      | 'is';
-  }[];
+  filters?: Filter[];
   page?: number;
   pageSize?: number;
   usePagination?: boolean;
@@ -93,17 +81,54 @@ export async function fetchAll({
 }
 
 /**
- * Fetch a single record from the specified table.
+ * Fetch a single record from the specified table with optional filters.
  * @param table - The table name.
  * @param id - The record id.
+ * @param filters - Additional filters to apply.
  * @returns The single record as type T.
  */
-export async function fetch<T>(table: string, id: string | number): Promise<T> {
-  const { data, error } = await supabase
-    .from(table)
-    .select('*')
-    .eq('id', id)
-    .single();
+export async function fetch<T>(
+  table: string,
+  id: string | number,
+  filters: Filter[] = [],
+): Promise<T> {
+  let query = supabase.from(table).select('*').eq('id', id);
+
+  filters.forEach(({ column, value, operator = 'eq' }) => {
+    switch (operator) {
+      case 'eq':
+        query = query.eq(column, value);
+        break;
+      case 'not':
+        query = query.not(column, 'is', value);
+        break;
+      case 'lt':
+        query = query.lt(column, value);
+        break;
+      case 'lte':
+        query = query.lte(column, value);
+        break;
+      case 'gt':
+        query = query.gt(column, value);
+        break;
+      case 'gte':
+        query = query.gte(column, value);
+        break;
+      case 'like':
+        query = query.like(column, value as string);
+        break;
+      case 'ilike':
+        query = query.ilike(column, value as string);
+        break;
+      case 'is':
+        query = query.is(column, value);
+        break;
+      default:
+        throw new Error(`Unsupported filter operator: ${operator}`);
+    }
+  });
+
+  const { data, error } = await query.single();
   if (error) throw error;
   return data as T;
 }
