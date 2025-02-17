@@ -31,13 +31,13 @@ interface FetchAllParams {
   usePagination?: boolean;
 }
 
-export const fetchAll = async ({
+export async function fetchAll({
   table,
   filters = [],
   page = 1,
   pageSize = 10,
   usePagination = true,
-}: FetchAllParams) => {
+}: FetchAllParams) {
   let query = supabase.from(table).select('*', { count: 'exact' });
 
   // Apply filters dynamically using switch-case
@@ -90,7 +90,24 @@ export const fetchAll = async ({
   if (error) throw new Error(error.message);
 
   return { data, count };
-};
+}
+
+/**
+ * Fetch a single record from the specified table.
+ * @param table - The table name.
+ * @param id - The record id.
+ * @returns The single record as type T.
+ */
+export async function fetch<T>(table: string, id: string | number): Promise<T> {
+  const { data, error } = await supabase
+    .from(table)
+    .select('*')
+    .eq('id', id)
+    .single();
+  if (error) throw error;
+  return data as T;
+}
+
 export interface DeleteParams {
   table: string;
   ids: (string | number)[];
@@ -205,6 +222,22 @@ export async function insertRecipeCategories(
 }
 
 /**
+ * Delete join records for the given recipe and category IDs.
+ */
+export async function deleteRecipeCategories(
+  recipe_id: string,
+  category_ids: number[],
+) {
+  const { data, error } = await supabase
+    .from('recipe_categories')
+    .delete()
+    .eq('recipe_id', recipe_id)
+    .in('category_id', category_ids);
+  if (error) throw error;
+  return data;
+}
+
+/**
  * Dummy uploadImages function.
  */
 export async function uploadImages(files: File[]): Promise<string[]> {
@@ -214,4 +247,21 @@ export async function uploadImages(files: File[]): Promise<string[]> {
   return files.map(
     (file) => `https://example.com/uploads/${encodeURIComponent(file.name)}`,
   );
+}
+
+/**
+ * Update an existing recipe.
+ * It takes the recipe id and the fields to update.
+ */
+export async function updateRecipe(
+  recipeId: string,
+  recipe: RecipeInput,
+): Promise<RecipeRecord[]> {
+  const { data, error } = await supabase
+    .from('recipes')
+    .update(recipe)
+    .eq('id', recipeId)
+    .select();
+  if (error) throw error;
+  return data as RecipeRecord[];
 }
