@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
 
 function Home() {
@@ -51,27 +50,6 @@ function Home() {
           >
             Read our docs
           </a>
-          <button
-            className='rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44'
-            onClick={async () => {
-              console.log('Button Press');
-
-              const supabaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-              const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-              if (!supabaseUrl || !supabaseKey) {
-                throw new Error('Missing Supabase URL or Key');
-              }
-              const supabase = createClient(supabaseUrl, supabaseKey);
-
-              const { data: categories, error } = await supabase
-                .from('categories')
-                .select('*');
-
-              console.log('Results', categories, error);
-            }}
-          >
-            Fetch data
-          </button>
           <Link
             href='/supabase'
             className='rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44'
