@@ -88,6 +88,14 @@ function SupabaseClient() {
         >
           Insert Recipe
         </Button>
+        <Button
+          component={Link}
+          href='/home'
+          variant='outline'
+          color='blue'
+        >
+          Authentication Home
+        </Button>
       </div>
 
       {/* Top Controls: Table Selection + Refresh Button + Pagination Toggle */}
