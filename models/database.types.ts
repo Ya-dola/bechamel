@@ -6,18 +6,21 @@ export type Database = {
       categories: {
         Row: {
           created_at: string | null;
+          deleted_at: string | null;
           id: number;
           name: string;
           updated_at: string | null;
         };
         Insert: {
           created_at?: string | null;
+          deleted_at?: string | null;
           id?: number;
           name: string;
           updated_at?: string | null;
         };
         Update: {
           created_at?: string | null;
+          deleted_at?: string | null;
           id?: number;
           name?: string;
           updated_at?: string | null;
@@ -27,14 +30,17 @@ export type Database = {
       recipe_categories: {
         Row: {
           category_id: number;
+          created_at: string | null;
           recipe_id: string;
         };
         Insert: {
           category_id: number;
+          created_at?: string | null;
           recipe_id: string;
         };
         Update: {
           category_id?: number;
+          created_at?: string | null;
           recipe_id?: string;
         };
         Relationships: [
