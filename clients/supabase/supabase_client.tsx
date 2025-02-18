@@ -1,0 +1,229 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button, Switch, SegmentedControl } from '@mantine/core';
+import { useFetchAll } from '@/hooks/useFetchAll';
+import { useSoftDelete } from '@/hooks/useSoftDelete';
+import { useHardDelete } from '@/hooks/useHardDelete';
+import { Tables } from '@/models/database.types';
+
+const TABLE_OPTIONS = [
+  { label: 'Recipes', value: 'recipes' },
+  { label: 'Categories', value: 'categories' },
+] as const;
+
+function SupabaseClient() {
+  const router = useRouter();
+  const [page, setPage] = useState(1);
+  const [usePagination, setUsePagination] = useState(true);
+  const [selectedTable, setSelectedTable] = useState<'recipes' | 'categories'>(
+    'recipes',
+  );
+  const pageSize = 5;
+
+  // Fetch data dynamically based on selected table
+  const { data, isLoading, error, refetch, isFetching } = useFetchAll({
+    table: selectedTable,
+    page,
+    pageSize,
+    usePagination,
+  });
+
+  // Soft delete hook for the selected table
+  const { mutate: softDelete, isPending: isDeleting } =
+    useSoftDelete(selectedTable);
+
+  // Hard delete hook for the selected table
+  const { mutate: hardDelete, isPending: isHardDeleting } =
+    useHardDelete(selectedTable);
+
+  // Ensure count is safe
+  const count = data?.count ?? 0;
+  const items = data?.data ?? [];
+
+  // Refetch data when table changes
+  useEffect(() => {
+    refetch();
+  }, [selectedTable, refetch]);
+
+  const handleDelete = (id: string | number) => {
+    softDelete([id]);
+  };
+
+  const handleDeleteHard = (id: string | number) => {
+    hardDelete([id]);
+  };
+
+  return (
+    <div className='flex flex-col items-center justify-center min-h-screen px-6 py-12 space-y-6 bg-black text-white'>
+      {/* Title */}
+      <h1 className='text-3xl font-bold'>Supabase Data Fetcher</h1>
+
+      {/* Navigation Buttons */}
+      <div className='flex flex-wrap gap-4'>
+        <Button
+          component={Link}
+          href='/'
+          variant='filled'
+          color='blue'
+          className='mb-4'
+        >
+          Home
+        </Button>
+        <Button
+          component={Link}
+          href='/insert_category'
+          variant='outline'
+          color='green'
+        >
+          Insert Category
+        </Button>
+        <Button
+          component={Link}
+          href='/insert_recipe'
+          variant='outline'
+          color='green'
+        >
+          Insert Recipe
+        </Button>
+      </div>
+
+      {/* Top Controls: Table Selection + Refresh Button + Pagination Toggle */}
+      <div className='flex w-full max-w-lg items-center justify-between gap-4'>
+        {/* Table Selection */}
+        <SegmentedControl
+          value={selectedTable}
+          onChange={(value) =>
+            setSelectedTable(value as 'recipes' | 'categories')
+          }
+          data={[...TABLE_OPTIONS]}
+          fullWidth
+          color='blue'
+          classNames={{
+            root: 'bg-black border border-white rounded-lg', // ✅ Black background with white border
+            indicator: 'bg-blue-500', // ✅ Blue indicator for selected option
+            control: 'text-white hover:bg-gray-800', // ✅ White text, dark hover
+          }}
+        />
+
+        {/* Refresh Data Button */}
+        <Button
+          variant='outline'
+          color='blue'
+          onClick={() => refetch()}
+          loading={isFetching}
+        >
+          {isFetching ? 'Refreshing...' : 'Refetch Data'}
+        </Button>
+
+        {/* Pagination Toggle */}
+        <Switch
+          checked={usePagination}
+          onChange={() => setUsePagination(!usePagination)}
+          label='Paginate'
+          color='blue'
+        />
+      </div>
+
+      {/* Loading & Error Messages */}
+      {isLoading && <p className='text-gray-400'>Loading...</p>}
+      {error && <p className='text-red-500'>{error.message}</p>}
+
+      {/* Display Data or No Data Card */}
+      <ul className='w-full max-w-2xl space-y-3'>
+        {items.length > 0 ? (
+          items.map(
+            (item: Tables<'recipes'> | Tables<'categories'>) =>
+              'name' in item && (
+                <li
+                  key={item.id}
+                  className='p-4 bg-black border border-white rounded-lg shadow-md flex flex-col hover:cursor-pointer hover:bg-gray-800'
+                  onClick={() =>
+                    selectedTable === 'recipes' &&
+                    router.push(`/view_recipe?id=${item.id}`)
+                  }
+                >
+                  <div className='flex justify-between items-center'>
+                    <div>
+                      <p className='text-sm text-gray-400'>ID: {item.id}</p>
+                      <strong className='text-lg text-white'>
+                        {item.name}
+                      </strong>
+                    </div>
+                    <div className='flex gap-4'>
+                      {selectedTable === 'recipes' && (
+                        <Button
+                          component={Link}
+                          href={`/update_recipe?id=${item.id}`}
+                          variant='outline'
+                          color='cyan'
+                          size='xs'
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Update
+                        </Button>
+                      )}
+                      <Button
+                        variant='outline'
+                        color='red'
+                        size='xs'
+                        disabled={isDeleting}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(item.id);
+                        }}
+                      >
+                        Soft Delete
+                      </Button>
+                      <Button
+                        variant='filled'
+                        color='red'
+                        size='xs'
+                        disabled={isHardDeleting}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteHard(item.id);
+                        }}
+                      >
+                        Hard Delete
+                      </Button>
+                    </div>
+                  </div>
+                </li>
+              ),
+          )
+        ) : (
+          <li className='p-4 bg-black border border-white rounded-lg shadow-md flex items-center justify-center'>
+            <strong className='text-lg text-white'>No Data Available</strong>
+          </li>
+        )}
+      </ul>
+
+      {/* Pagination Controls */}
+      {usePagination && count > 0 && (
+        <div className='flex items-center gap-4 mt-6'>
+          <Button
+            variant='outline'
+            color='blue'
+            disabled={page === 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            Prev
+          </Button>
+          <Button
+            variant='outline'
+            color='blue'
+            disabled={page * pageSize >= count}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default SupabaseClient;
