@@ -1,6 +1,7 @@
 'use client';
 
 import DirectionsCards from '@/components/directionsCard/directionsCard';
+import CustomBadge from '@/components/customBadge/customBadge';
 import IconCard from '@/components/iconCard/iconCard';
 import IngredientCard from '@/components/ingredientCard/ingredientCard';
 import LineBookCard from '@/components/lineBookCard/lineBookCard';
@@ -57,6 +58,11 @@ function TestClient() {
           bgColor={'bg-red-300'}
           labelColor={'text-slate-700'}
           subTextColor={'text-slate-900'}
+        />
+        <CustomBadge text={'Custom Badge'} />
+        <CustomBadge
+          text={'With Icon'}
+          icon={'line-md:star'}
         />
       </div>
     </div>

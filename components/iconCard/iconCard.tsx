@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import CustomIcon from '@/components/customIcon/customIcon';
 
 interface IconCardProps {
   label: string;
@@ -36,14 +36,11 @@ function IconCard({
       className={`flex flex-col items-center justify-center h-fit w-fit fit-content ${cardGap} ${padding} ${bgColor} ${radius}`}
     >
       {icon && (
-        <div className={`aspect-square w-${iconSize} h-${iconSize}`}>
-          <Icon
-            icon={icon}
-            className={`${iconColor} w-full h-full`}
-            height={iconSize}
-            width={iconSize}
-          />
-        </div>
+        <CustomIcon
+          icon={icon}
+          iconSize={iconSize}
+          iconColor={iconColor}
+        />
       )}
 
       <p className={labelStyle}>{label}</p>
