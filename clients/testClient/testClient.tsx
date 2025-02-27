@@ -4,7 +4,7 @@ import IconCard from '@/components/iconCard/iconCard';
 
 function TestClient() {
   return (
-    <div className='flex flex-col p-8 gap-4'>
+    <div className='flex flex-row flex-wrap p-8 gap-4'>
       <h1>Test Client</h1>
       <IconCard label={'Label'} />
       <IconCard
@@ -18,7 +18,7 @@ function TestClient() {
         label={'Prep Time'}
         subText={'5 min'}
         icon={'line-md:speed'}
-        bgColor={'bg-green-200'}
+        bgColor={'bg-orange-200'}
         labelColor={'text-slate-700'}
         subTextColor={'text-slate-900'}
       />
