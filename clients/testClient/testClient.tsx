@@ -1,6 +1,8 @@
 'use client';
 
+import DirectionsCards from '@/components/directionsCard/directionsCard';
 import IconCard from '@/components/iconCard/iconCard';
+import IngredientCard from '@/components/ingredientCard/ingredientCard';
 import LineBookCard from '@/components/lineBookCard/lineBookCard';
 
 function TestClient() {
@@ -9,6 +11,8 @@ function TestClient() {
       <h1 className='w-full text-center'>Test Client</h1>
       <div className='flex flex-row flex-wrap p-8 gap-4'>
         <LineBookCard />
+        <IngredientCard />
+        <DirectionsCards />
         <IconCard label={'Label'} />
         <IconCard
           label={'Prep Time'}

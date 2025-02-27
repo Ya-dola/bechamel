@@ -1,5 +1,4 @@
-//import { Checkbox } from '@mantine/core';
-import LineBookCard from '../lineBookCard/lineBookCard';
+import LineBookCard from '@/components/lineBookCard/lineBookCard';
 
 function IngredientCard() {
   return (

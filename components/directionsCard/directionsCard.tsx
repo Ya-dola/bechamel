@@ -1,4 +1,4 @@
-import LineBookCard from '../lineBookCard/lineBookCard';
+import LineBookCard from '@/components/lineBookCard/lineBookCard';
 
 function DirectionsCards() {
   return (
