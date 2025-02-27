@@ -1,4 +1,4 @@
-import TestClient from '@/clients/test_client/test_client';
+import TestClient from '@/clients/testClient/testClient';
 
 function TestPage() {
   return <TestClient />;
