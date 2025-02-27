@@ -1,24 +1,22 @@
 import { Checkbox } from '@mantine/core';
 
 interface LineBookCardProps {
+  title?: string;
   bgColor?: string;
   textColor?: string;
   lineColor?: string;
   showSteps?: boolean;
+  items?: string[];
 }
 
 const LineBookCard: React.FC<LineBookCardProps> = ({
+  title = 'Title',
   bgColor = 'bg-white',
   textColor = 'text-black',
   lineColor = 'border-gray-400',
   showSteps = false, // Default to false to show checkboxes
+  items = [],
 }) => {
-  const items = [
-    'First item of the list',
-    'Second item of the list',
-    'Third item of the list',
-    'Fourth item of the list',
-  ];
   return (
     <div
       className={`flex flex-col items-start p-4 ${bgColor} w-96 rounded-lg shadow-md`}
@@ -26,7 +24,7 @@ const LineBookCard: React.FC<LineBookCardProps> = ({
       <h2
         className={`text-2xl font-semibold ${textColor} border-b ${lineColor} border-opacity-20 py-2 mb-4 w-full`}
       >
-        Title text
+        {title}
       </h2>
 
       <ul className={`text-left ${textColor} w-full`}>
