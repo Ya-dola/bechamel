@@ -9,7 +9,7 @@ const metadata: Metadata = {
   description: 'The only recipe book you need!',
 };
 
-const themeMode = 'dark';
+const themeMode = 'light';
 
 function RootLayout({ children }: { children: React.ReactNode }) {
   return (
