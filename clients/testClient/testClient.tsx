@@ -5,6 +5,7 @@ import CustomBadge from '@/components/customBadge/customBadge';
 import IconCard from '@/components/iconCard/iconCard';
 import IngredientCard from '@/components/ingredientCard/ingredientCard';
 import LineBookCard from '@/components/lineBookCard/lineBookCard';
+import CustomImage from '@/components/customImage/customImage';
 
 function TestClient() {
   return (
@@ -63,6 +64,10 @@ function TestClient() {
         <CustomBadge
           text={'With Icon'}
           icon={'line-md:star'}
+        />
+        <CustomImage
+          height={200}
+          imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
         />
       </div>
     </div>
