@@ -7,6 +7,7 @@ import IngredientCard from '@/components/ingredientCard/ingredientCard';
 import LineBookCard from '@/components/lineBookCard/lineBookCard';
 import CustomImage from '@/components/customImage/customImage';
 import CustomAppShell from '@/components/customAppShell/customAppShell';
+import RecipeCard from '@/components/recipeCard/recipeCard';
 
 function TestClient() {
   return (
@@ -68,8 +69,16 @@ function TestClient() {
             icon={'line-md:star'}
           />
         </div>
-          <CustomImage
+        <CustomImage
           height={200}
+          imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+        />
+        <RecipeCard
+          heading='Pancake'
+          username='Firt name lastname'
+          totalTime={60}
+          difficulty={'hard'}
+          width={300}
           imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
         />
       </div>
