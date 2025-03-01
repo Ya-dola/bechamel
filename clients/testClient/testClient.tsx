@@ -12,6 +12,7 @@ import RecipeCard from '@/components/recipeCard/recipeCard';
 import NotesCard from '@/components/notesCard/notesCard';
 import CustomTextInput from '@/components/customTextInput/customTextInput';
 import CustomPasswordInput from '@/components/customPasswordInput/customPasswordInput';
+import GradientCard from '@/components/gradientCard/gradientCard';
 
 function TestClient() {
   const [textValue, setTextValue] = useState('');
@@ -85,6 +86,18 @@ function TestClient() {
             width={300}
             imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
           />
+          <GradientCard>
+            <p>Gradient Card</p>
+          </GradientCard>
+          <GradientCard
+            gradient={
+              'bg-gradient-to-b from-violet-300 from-40% to-emerald-600/50 to-90%'
+            }
+          >
+            <p>Gradient Card</p>
+            <p>With Green Color</p>
+          </GradientCard>
+
           <div className='w-fit h-fit'>
             <h2 className='text-xl font-bold mb-2'>Plain Text Input</h2>
             <CustomTextInput
