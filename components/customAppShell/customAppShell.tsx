@@ -105,7 +105,7 @@ function CustomAppShell({
           zIndex: 1,
         }}
         // Add padding to the top so that content is not covered by the header
-        pt={`calc(${rem(60)} + var(--mantine-spacing-md))`}
+        pt={`calc(${rem(60)} )`}
       >
         {children}
       </AppShell.Main>
