@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextInput, TextInputProps, CloseButton } from '@mantine/core';
 import { ZodSchema, z, ZodError } from 'zod';
 
-export interface CustomInputProps extends TextInputProps {
+export interface CustomTextInputProps extends TextInputProps {
   type?: 'text' | 'email' | string;
   value?: string;
   /**
@@ -15,11 +15,15 @@ export interface CustomInputProps extends TextInputProps {
    * If type is "email" and no schema is provided, a default email schema will be used.
    */
   schema?: ZodSchema;
-  /** Optional Tailwind CSS classes to style the input element */
-  inputClassName?: string;
   /** Whether to show a clear (X) button when there is text */
   clearable?: boolean;
   containerClassName?: string;
+  variant?: 'filled' | 'default' | 'unstyled';
+  /**
+   * An external error message (for example from react-hook-form).
+   * This is used when the field is empty.
+   */
+  externalError?: string;
 }
 
 export function CustomTextInput({
@@ -27,17 +31,18 @@ export function CustomTextInput({
   value = '',
   onValueChange,
   schema,
-  inputClassName,
   clearable = true,
   containerClassName,
+  variant = 'filled',
+  externalError,
   ...rest
-}: CustomInputProps) {
-  // If no schema is provided and type is "email", use a default email validator.
+}: CustomTextInputProps) {
+  // Use default Zod email validator if type is "email" and no schema provided.
   const effectiveSchema =
     schema ??
     (type === 'email' ? z.string().email('Invalid email address') : undefined);
 
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+  const [internalError, setInternalError] = useState<string | undefined>(
     undefined,
   );
 
@@ -46,18 +51,14 @@ export function CustomTextInput({
     if (effectiveSchema) {
       try {
         // If the field is empty, clear error; otherwise validate.
-        if (newValue.trim() === '') {
-          setErrorMessage(undefined);
-        } else {
-          effectiveSchema.parse(newValue);
-          setErrorMessage(undefined);
-        }
+        effectiveSchema.parse(newValue);
+        setInternalError(undefined);
       } catch (error) {
         if (error instanceof ZodError) {
           // Join all error messages if needed.
-          setErrorMessage(error.errors.map((err) => err.message).join(', '));
+          setInternalError(error.errors.map((err) => err.message).join(', '));
         } else if (error instanceof Error) {
-          setErrorMessage(error.message);
+          setInternalError(error.message);
         }
       }
     }
@@ -69,21 +70,24 @@ export function CustomTextInput({
     }
   };
 
+  // If the field is empty, use the external error (e.g. "Email is required");
+  // otherwise, show the inline (internal) error.
+  const finalError = value.trim() === '' ? externalError : internalError;
+
   const handleClear = () => {
     if (onValueChange) {
       onValueChange('');
     }
-    setErrorMessage(undefined);
+    setInternalError(undefined);
   };
-
   return (
     <div className={`${containerClassName}`}>
       <TextInput
         type={type}
         value={value}
         onChange={handleChange}
-        error={errorMessage || rest.error}
-        classNames={{ input: inputClassName }}
+        error={finalError}
+        variant={variant}
         rightSectionPointerEvents='all'
         rightSection={
           clearable ? (
