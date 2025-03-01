@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   PasswordInput,
   PasswordInputProps,
-  // CloseButton,
   Popover,
   Progress,
   Text,
@@ -23,9 +22,12 @@ export interface CustomPasswordInputProps extends PasswordInputProps {
    * If not provided, no additional schema validation occurs.
    */
   schema?: ZodSchema;
-  /** Optional Tailwind CSS classes to style the input element */
-  inputClassName?: string;
   containerClassName?: string;
+  /**
+   * Whether to show the popover with password strength and requirements.
+   * Defaults to false.
+   */
+  showPopover?: boolean;
 }
 
 // Password requirements for showing password strength
@@ -79,12 +81,12 @@ function PasswordRequirement({
   );
 }
 
-export function CustomPasswordInput({
+function CustomPasswordInput({
   value = '',
   onValueChange,
   schema,
-  inputClassName,
   containerClassName,
+  showPopover = false,
   ...rest
 }: CustomPasswordInputProps) {
   // Use the provided schema if any; no default for password is applied here.
@@ -127,46 +129,54 @@ export function CustomPasswordInput({
 
   return (
     <div className={`${containerClassName}`}>
-      <Popover
-        opened={popoverOpened}
-        position='bottom'
-        width='target'
-        transitionProps={{ transition: 'pop', duration: 200 }}
-      >
-        <Popover.Target>
-          <div
-            onFocusCapture={() => setPopoverOpened(true)}
-            onBlurCapture={() => setPopoverOpened(false)}
-          >
-            <PasswordInput
-              value={value}
-              onChange={handleChange}
-              error={errorMessage || rest.error}
-              classNames={{ input: inputClassName }}
-              {...rest}
+      {showPopover ? (
+        <Popover
+          opened={popoverOpened}
+          position='bottom'
+          width='target'
+          transitionProps={{ transition: 'pop', duration: 200 }}
+        >
+          <Popover.Target>
+            <div
+              onFocusCapture={() => setPopoverOpened(true)}
+              onBlurCapture={() => setPopoverOpened(false)}
+            >
+              <PasswordInput
+                value={value}
+                onChange={handleChange}
+                error={errorMessage || rest.error}
+                {...rest}
+              />
+            </div>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Progress
+              color={progressColor}
+              value={strength}
+              size={5}
+              mb='xs'
             />
-          </div>
-        </Popover.Target>
-        <Popover.Dropdown>
-          <Progress
-            color={progressColor}
-            value={strength}
-            size={5}
-            mb='xs'
-          />
-          <PasswordRequirement
-            label='Includes at least 8 characters'
-            meets={value.length > 7}
-          />
-          {requirements.map((req, index) => (
             <PasswordRequirement
-              key={index}
-              label={req.label}
-              meets={req.re.test(value)}
+              label='Includes at least 8 characters'
+              meets={value.length > 7}
             />
-          ))}
-        </Popover.Dropdown>
-      </Popover>
+            {requirements.map((req, index) => (
+              <PasswordRequirement
+                key={index}
+                label={req.label}
+                meets={req.re.test(value)}
+              />
+            ))}
+          </Popover.Dropdown>
+        </Popover>
+      ) : (
+        <PasswordInput
+          value={value}
+          onChange={handleChange}
+          error={errorMessage || rest.error}
+          {...rest}
+        />
+      )}
     </div>
   );
 }
