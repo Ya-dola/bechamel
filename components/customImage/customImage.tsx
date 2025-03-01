@@ -9,7 +9,7 @@ interface CustomImageProps {
 }
 
 function CustomImage({
-  height = 500,
+  width = 500,
   radius = 'md',
   imageSrc = '',
   altName = 'altName',
@@ -18,8 +18,8 @@ function CustomImage({
     <Image
       alt={altName}
       radius={radius}
-      h={height}
-      w='auto'
+      h={'auto'}
+      w={width}
       fit='contain'
       src={imageSrc}
     />
