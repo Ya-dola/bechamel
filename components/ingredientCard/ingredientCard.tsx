@@ -5,7 +5,7 @@ function IngredientCard() {
     <LineBookCard
       title={'Ingredients'}
       items={['item 1', 'item 2']}
-      showSteps={false}
+      displayMode={'checkboxes'}
     />
   );
 }

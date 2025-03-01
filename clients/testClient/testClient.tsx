@@ -8,6 +8,7 @@ import LineBookCard from '@/components/lineBookCard/lineBookCard';
 import CustomImage from '@/components/customImage/customImage';
 import CustomAppShell from '@/components/customAppShell/customAppShell';
 import RecipeCard from '@/components/recipeCard/recipeCard';
+import NotesCard from '@/components/notesCard/notesCard';
 
 function TestClient() {
   return (
@@ -18,6 +19,7 @@ function TestClient() {
           <LineBookCard />
           <IngredientCard />
           <DirectionsCards />
+          <NotesCard />
           <IconCard label={'Label'} />
           <IconCard
             label={'Prep Time'}

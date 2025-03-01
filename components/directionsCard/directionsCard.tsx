@@ -5,7 +5,7 @@ function DirectionsCards() {
     <LineBookCard
       title={'Directions'}
       items={['directions 1', 'directions 2']}
-      showSteps={true}
+      displayMode={'steps'}
     />
   );
 }
