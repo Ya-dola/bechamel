@@ -5,7 +5,7 @@ interface LineBookCardProps {
   bgColor?: string;
   textColor?: string;
   lineColor?: string;
-  showSteps?: boolean;
+  displayMode?: 'steps' | 'checkboxes' | 'none'; // New displayMode prop
   items?: string[];
 }
 
@@ -14,7 +14,7 @@ const LineBookCard: React.FC<LineBookCardProps> = ({
   bgColor = 'bg-white',
   textColor = 'text-black',
   lineColor = 'border-gray-400',
-  showSteps = false, // Default to false to show checkboxes
+  displayMode = 'checkboxes', // Default to checkboxes
   items = [],
 }) => {
   return (
@@ -37,15 +37,17 @@ const LineBookCard: React.FC<LineBookCardProps> = ({
                 : ''
             }`}
           >
-            {showSteps ? (
+            {displayMode === 'steps' && (
               <span className={`font-semibold mr-2`}>Step {index + 1}:</span>
-            ) : (
+            )}
+            {displayMode === 'checkboxes' && (
               <Checkbox
                 color='indigo'
                 size='md'
+                className='mr-2'
               />
             )}
-            <span className='ml-2'>{item}</span>
+            <span className='ml-2'>{item}</span> {/* Always render the item */}
           </li>
         ))}
       </ul>
