@@ -12,7 +12,6 @@ import { ZodSchema, ZodError } from 'zod';
 import CustomIcon from '@/components/customIcon/customIcon';
 
 export interface CustomPasswordInputProps extends PasswordInputProps {
-  /** The current value of the input */
   value?: string;
   /**
    * A change handler that receives the new value as a string.
@@ -26,13 +25,7 @@ export interface CustomPasswordInputProps extends PasswordInputProps {
   schema?: ZodSchema;
   /** Optional Tailwind CSS classes to style the input element */
   inputClassName?: string;
-  /** Whether to show a clear (X) button when there is text */
-  clearable?: boolean;
-  /**
-   * Optional Tailwind CSS max-width class for the input container,
-   * e.g. "max-w-3xl" or "max-w-[300px]". Defaults to no max width.
-   */
-  maxWidthClass?: string;
+  containerClassName?: string;
 }
 
 // Password requirements for showing password strength
@@ -62,6 +55,7 @@ function PasswordRequirement({
 }) {
   return (
     <Text
+      component='div'
       c={meets ? 'teal' : 'red'}
       style={{ display: 'flex', alignItems: 'center' }}
       mt={6}
@@ -90,8 +84,7 @@ export function CustomPasswordInput({
   onValueChange,
   schema,
   inputClassName,
-  // clearable = true,
-  maxWidthClass,
+  containerClassName,
   ...rest
 }: CustomPasswordInputProps) {
   // Use the provided schema if any; no default for password is applied here.
@@ -132,15 +125,8 @@ export function CustomPasswordInput({
     }
   };
 
-  // const handleClear = () => {
-  //   if (onValueChange) {
-  //     onValueChange('');
-  //   }
-  //   setErrorMessage(undefined);
-  // };
-
   return (
-    <div className={`w-full ${maxWidthClass ? maxWidthClass : ''}`}>
+    <div className={`${containerClassName}`}>
       <Popover
         opened={popoverOpened}
         position='bottom'
@@ -157,17 +143,6 @@ export function CustomPasswordInput({
               onChange={handleChange}
               error={errorMessage || rest.error}
               classNames={{ input: inputClassName }}
-              // // Use leftSection for the clear button:
-              // leftSection={
-              //   clearable ? (
-              //     <CloseButton
-              //       aria-label='Clear password input'
-              //       onClick={handleClear}
-              //       style={{ display: value ? undefined : 'none' }}
-              //     />
-              //   ) : null
-              // }
-              // Do not override rightSection so the default visibility toggle remains.
               {...rest}
             />
           </div>
@@ -180,8 +155,8 @@ export function CustomPasswordInput({
             mb='xs'
           />
           <PasswordRequirement
-            label='Includes at least 6 characters'
-            meets={value.length > 5}
+            label='Includes at least 8 characters'
+            meets={value.length > 7}
           />
           {requirements.map((req, index) => (
             <PasswordRequirement
