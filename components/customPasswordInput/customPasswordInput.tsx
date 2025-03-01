@@ -28,6 +28,7 @@ export interface CustomPasswordInputProps extends PasswordInputProps {
    * Defaults to false.
    */
   showPopover?: boolean;
+  variant?: 'filled' | 'default' | 'unstyled';
 }
 
 // Password requirements for showing password strength
@@ -87,6 +88,7 @@ function CustomPasswordInput({
   schema,
   containerClassName,
   showPopover = false,
+  variant = 'filled',
   ...rest
 }: CustomPasswordInputProps) {
   // Use the provided schema if any; no default for password is applied here.
@@ -144,6 +146,7 @@ function CustomPasswordInput({
               <PasswordInput
                 value={value}
                 onChange={handleChange}
+                variant={variant}
                 error={errorMessage || rest.error}
                 {...rest}
               />
@@ -173,6 +176,7 @@ function CustomPasswordInput({
         <PasswordInput
           value={value}
           onChange={handleChange}
+          variant={variant}
           error={errorMessage || rest.error}
           {...rest}
         />
