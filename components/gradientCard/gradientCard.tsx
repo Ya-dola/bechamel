@@ -8,7 +8,7 @@ interface GradientCardProps {
 
 function GradientCard({
   gradient = 'bg-gradient-to-b from-violet-300 to-rose-400',
-  flex = 'flex flex-col items-center justify-center gap-1',
+  flex = 'flex flex-col items-center justify-center gap-2',
   padding = 'px-8 py-4',
   className = 'h-fit w-fit rounded-xl',
   children,
