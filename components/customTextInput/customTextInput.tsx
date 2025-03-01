@@ -19,11 +19,7 @@ export interface CustomInputProps extends TextInputProps {
   inputClassName?: string;
   /** Whether to show a clear (X) button when there is text */
   clearable?: boolean;
-  /**
-   * Optional Tailwind CSS max-width class for the input container,
-   * e.g. "max-w-3xl" or "max-w-[300px]". Defaults to no max width.
-   */
-  maxWidthClass?: string;
+  containerClassName?: string;
 }
 
 export function CustomTextInput({
@@ -33,7 +29,7 @@ export function CustomTextInput({
   schema,
   inputClassName,
   clearable = true,
-  maxWidthClass,
+  containerClassName,
   ...rest
 }: CustomInputProps) {
   // If no schema is provided and type is "email", use a default email validator.
@@ -81,7 +77,7 @@ export function CustomTextInput({
   };
 
   return (
-    <div className={`w-full ${maxWidthClass ? maxWidthClass : ''}`}>
+    <div className={`${containerClassName}`}>
       <TextInput
         type={type}
         value={value}
