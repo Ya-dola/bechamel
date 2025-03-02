@@ -10,20 +10,20 @@ import { signIn } from '@/services/supabase_auth_service';
 import GradientCard from '@/components/gradientCard/gradientCard';
 import CustomImage from '@/components/customImage/customImage';
 
-interface LoginFormValues {
+interface SignInFormValues {
   email: string;
   password: string;
 }
 
-function LoginForm() {
-  const { control, handleSubmit } = useForm<LoginFormValues>({
+function SignInForm() {
+  const { control, handleSubmit } = useForm<SignInFormValues>({
     defaultValues: { email: '', password: '' },
     mode: 'onChange',
   });
   const router = useRouter();
   const [formError, setFormError] = useState<string>('');
 
-  const onSubmit = async (values: LoginFormValues) => {
+  const onSubmit = async (values: SignInFormValues) => {
     const { email, password } = values;
     setFormError('');
     const result = await signIn(email, password);
@@ -37,7 +37,7 @@ function LoginForm() {
   return (
     <div
       className='flex flex-row items-center w-6xl min-h-196
-      px-6 py-12 space-y-6 border-2 border-slate-400 rounded-2xl gap-x-24'
+      px-8 py-12 space-y-6 border-2 border-slate-400 rounded-2xl gap-x-24'
     >
       <div className='flex flex-col gap-6 w-full'>
         <div className='flex flex-row flex-wrap gap-2 items-center'>
@@ -45,7 +45,7 @@ function LoginForm() {
           <p>KoiPad</p>
         </div>
         <div className='flex flex-col gap-1'>
-          <h1 className='text-3xl font-bold'>Welcome Back!</h1>
+          <h1 className='text-3xl font-bold'>Welcome Back</h1>
           <p className='text-slate-400 font-extralight text-sm'>
             Enter your details to sign in!
           </p>
@@ -97,6 +97,12 @@ function LoginForm() {
               />
             )}
           />
+          <Link
+            href='/forgotPassword'
+            className='text-violet-500 underline w-full text-right text-sm mt-[-1.5rem]'
+          >
+            Forgot Password
+          </Link>
           {formError && (
             <p className='text-red-500 text-sm text-center'>{formError}</p>
           )}
@@ -114,8 +120,8 @@ function LoginForm() {
         <p className='text-slate-400 font-extralight text-sm w-full text-center'>
           Don&apos;t have an account?
           <Link
-            href='/sign_up'
-            className='text-violet-400 underline ml-1'
+            href='/signUp'
+            className='text-violet-500 underline ml-1'
           >
             Sign Up
           </Link>
@@ -139,4 +145,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default SignInForm;
