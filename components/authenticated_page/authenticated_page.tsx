@@ -36,7 +36,7 @@ export default function AuthenticatedPage({
       console.log(
         'AuthenticatedPage: no session after fetch, redirecting to /login',
       );
-      router.push('/signIn');
+      router.push('/login_old');
     }
   }, [localLoading, session, router]);
 

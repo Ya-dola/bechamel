@@ -1,7 +1,7 @@
-import LoginClient from '@/clients/signInClient/signInClient';
+import LoginClientOld from "@/clients/login_client_old/login_client_old";
 
 function LoginPageOld() {
-  return <LoginClient />;
+  return <LoginClientOld />;
 }
 
 export default LoginPageOld;

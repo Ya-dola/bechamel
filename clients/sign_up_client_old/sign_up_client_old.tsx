@@ -65,7 +65,7 @@ export default function SignUpClientOld() {
       <p>
         Already have an account?{' '}
         <Link
-          href='/login'
+          href='/login_old'
           className='text-blue-500 underline'
         >
           Login

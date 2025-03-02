@@ -70,7 +70,7 @@ export default function LoginClientOld() {
       <p>
         Don&apos;t have an account?
         <Link
-          href='/sign_up'
+          href='/sign_up_old'
           className='text-blue-500 underline'
         >
           Sign Up
