@@ -8,6 +8,7 @@ import {
 } from '@mantine/core';
 import { useHeadroom } from '@mantine/hooks';
 import Link from 'next/link';
+import ProfileComponent from '../profileComponent/profileComponent';
 
 interface CustomAppShellProps {
   children: ReactNode;
@@ -91,7 +92,7 @@ function CustomAppShell({
             >
               New Recipe
             </Link>
-            <div className='w-8 h-8 rounded-full bg-gray-400 mr-2' />{' '}
+            <ProfileComponent />
           </Flex>
         </Flex>
       </AppShell.Header>
