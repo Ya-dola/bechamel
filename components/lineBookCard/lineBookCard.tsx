@@ -19,7 +19,7 @@ const LineBookCard: React.FC<LineBookCardProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col items-start p-4 ${bgColor} w-96 rounded-lg shadow-md`}
+      className={`flex flex-col items-start p-4 ${bgColor} w-xl rounded-lg shadow-md`}
     >
       <h2
         className={`text-2xl font-semibold ${textColor} border-b ${lineColor} border-opacity-20 py-2 mb-4 w-full`}
@@ -31,14 +31,16 @@ const LineBookCard: React.FC<LineBookCardProps> = ({
         {items.map((item, index) => (
           <li
             key={index}
-            className={`flex items-center py-4 text-base ${
+            className={`flex  py-4 text-base ${
               index < items.length - 1
                 ? `border-b ${lineColor} border-opacity-10`
                 : ''
             }`}
           >
             {displayMode === 'steps' && (
-              <span className={`font-semibold mr-2`}>Step {index + 1}:</span>
+              <span className={`font-semibold mr-2 w-16`}>
+                Step {index + 1}:
+              </span>
             )}
             {displayMode === 'checkboxes' && (
               <Checkbox
@@ -47,7 +49,7 @@ const LineBookCard: React.FC<LineBookCardProps> = ({
                 className='mr-2'
               />
             )}
-            <span className='ml-2'>{item}</span> {/* Always render the item */}
+            <span className='ml-2 w-fit text-left'>{item}</span>
           </li>
         ))}
       </ul>
