@@ -11,7 +11,7 @@ interface LoginFormValues {
   password: string;
 }
 
-export default function LoginClient() {
+export default function LoginClientOld() {
   const {
     register,
     handleSubmit,
