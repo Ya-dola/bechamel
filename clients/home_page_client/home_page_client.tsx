@@ -5,6 +5,7 @@ import CustomImage from '@/components/customImage/customImage';
 import RecipeCard from '@/components/recipeCard/recipeCard';
 import CustomAppShell from '@/components/customAppShell/customAppShell';
 import CustomIcon from '@/components/customIcon/customIcon';
+import Link from 'next/link';
 
 interface HomePageClientProps {
   textColor?: string;
@@ -101,13 +102,16 @@ function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
           </div>
         </div>
         <div className={`flex flex-col w-full py-8 px-40 gap-8  ${bgColor}`}>
-          <div className='flex flex-row gap-2 items-center'>
+          <Link
+            href='/recipe_list'
+            className='flex flex-row gap-2 items-center'
+          >
             <h2 className='text-xl font-semibold'>My Recipes</h2>
             <CustomIcon
               icon={'line-md:chevron-right'}
               iconSize={'25'}
             />
-          </div>
+          </Link>
           <div className='flex flex-row gap-8'>
             <RecipeCard
               heading='Pancake'
