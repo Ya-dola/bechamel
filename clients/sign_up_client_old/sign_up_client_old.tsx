@@ -11,7 +11,7 @@ interface SignupFormValues {
   password: string;
 }
 
-export default function SignUpClient() {
+export default function SignUpClientOld() {
   const {
     register,
     handleSubmit,
