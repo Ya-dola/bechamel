@@ -69,7 +69,7 @@ function CustomAppShell({
             gap={'md'}
           >
             <Link
-              href='/supabase'
+              href='/home_page'
               className={`rounded-full transition-colors flex items-center justify-center ${textColor} text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44 hover:underline`}
             >
               Home
@@ -86,7 +86,7 @@ function CustomAppShell({
               className='h-10 sm:h-10 px-4 rounded-full bg-gray-200 text-black placeholder-gray-500'
             />
             <Link
-              href='/new-recipe'
+              href='/insert_recipe'
               className={`rounded-full transition-colors flex items-center justify-center ${buttonColor} ${buttonHoveredColor} ${textColor} text-sm sm:text-base h-10 sm:h-10 px-4 sm:px-5 sm:min-w-44 hover:border ${buttonBorderColor}`}
             >
               New Recipe

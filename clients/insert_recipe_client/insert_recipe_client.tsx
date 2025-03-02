@@ -149,7 +149,7 @@ function InsertRecipe() {
       <div className='flex justify-between items-center mb-6'>
         <Button
           component={Link}
-          href='/supabase'
+          href='/home_page'
           variant='outline'
           color='blue'
         >
