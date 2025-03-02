@@ -1,4 +1,4 @@
-import SignUpClient from '@/clients/sign_up_client/sign_up_client';
+import SignUpClient from '@/clients/signUpClient/signUpClient';
 
 function SignUpPage() {
   return <SignUpClient />;

@@ -4,35 +4,40 @@ import { useForm } from 'react-hook-form';
 import { Button, TextInput, PasswordInput } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signUp } from '@/services/supabase_auth_service';
+import { signIn } from '@/services/supabase_auth_service';
 
-interface SignupFormValues {
+interface LoginFormValues {
   email: string;
   password: string;
 }
 
-export default function SignUpClient() {
+export default function LoginClientOld() {
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<SignupFormValues>();
+  } = useForm<LoginFormValues>();
   const router = useRouter();
 
-  const onSubmit = async (values: SignupFormValues) => {
+  console.log('LoginClient rendered');
+
+  const onSubmit = async (values: LoginFormValues) => {
+    console.log('Login form submitted with values:', values);
     const { email, password } = values;
-    const result = await signUp(email, password);
+    const result = await signIn(email, password);
     if (result.error) {
+      console.log('Sign in error:', result.error.message);
       setError('email', { message: result.error.message });
     } else {
+      console.log('Sign in result:', result.data);
       router.push('/home');
     }
   };
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen px-6 py-12 space-y-6 bg-black text-white'>
-      <h1 className='text-3xl font-bold'>Sign Up</h1>
+      <h1 className='text-3xl font-bold'>Login</h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className='flex flex-col gap-4 w-full max-w-md'
@@ -59,16 +64,16 @@ export default function SignUpClient() {
           color='blue'
           className='w-full'
         >
-          Sign Up
+          Login
         </Button>
       </form>
       <p>
-        Already have an account?{' '}
+        Don&apos;t have an account?
         <Link
-          href='/login'
+          href='/sign_up_old'
           className='text-blue-500 underline'
         >
-          Login
+          Sign Up
         </Link>
       </p>
     </div>
