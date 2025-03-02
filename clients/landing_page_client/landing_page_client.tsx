@@ -38,7 +38,7 @@ function LandingPageClient({
           </div>
           <div className='w-fit'>
             <Link
-              href='/sigIn'
+              href='/signIn'
               className={`rounded-full transition-colors flex items-center justify-center ${buttonColor} ${buttonHoveredColor} ${textColor} text-sm sm:text-base px-8 py-2 hover:border ${buttonBorderColor}`}
             >
               Get Started

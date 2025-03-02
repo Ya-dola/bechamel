@@ -38,7 +38,7 @@ function SignUpForm() {
     if (result.error) {
       setFormError(result.error.message);
     } else {
-      router.push('/home');
+      router.push('/home_page');
     }
   };
 
