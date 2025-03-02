@@ -13,6 +13,10 @@ import NotesCard from '@/components/notesCard/notesCard';
 import CustomTextInput from '@/components/customTextInput/customTextInput';
 import CustomPasswordInput from '@/components/customPasswordInput/customPasswordInput';
 import GradientCard from '@/components/gradientCard/gradientCard';
+import SignInForm from '@/components/signInForm/signInForm';
+import SignUpForm from '@/components/signUpForm/signUpForm';
+import ForgotPasswordForm from '@/components/forgotPasswordForm/forgotPasswordForm';
+import ResetPasswordForm from '@/components/resetPasswordForm/resetPasswordForm';
 
 function TestClient() {
   const [textValue, setTextValue] = useState('');
@@ -130,6 +134,7 @@ function TestClient() {
               value={password}
               onValueChange={setPassword}
               containerClassName={'w-lg'}
+              showPopover
             />
             <p>Current Password: {password}</p>
           </div>
@@ -137,6 +142,10 @@ function TestClient() {
             height={250}
             imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
           />
+          <SignInForm />
+          <SignUpForm />
+          <ForgotPasswordForm />
+          <ResetPasswordForm />
         </div>
       </div>
     </CustomAppShell>
