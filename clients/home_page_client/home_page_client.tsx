@@ -45,7 +45,7 @@ function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
               <CustomImage
                 width={800}
                 radius='md'
-                imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+                imageSrc='/images/hp.png'
               />
             </div>
           </div>
@@ -57,7 +57,6 @@ function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
                 iconSize={'25'}
               />
             </div>
-
             <div className='flex flex-row gap-2'>
               <IconCard
                 label={'Prep Time'}
@@ -196,27 +195,27 @@ function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
             <CustomImage
               width={400}
               radius='0'
-              imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+              imageSrc='/images/1.png'
             />
             <CustomImage
               width={400}
               radius='0'
-              imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+              imageSrc='/images/lp.png'
             />
             <CustomImage
               width={400}
               radius='0'
-              imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+              imageSrc='/images/2.png'
             />
             <CustomImage
               width={400}
               radius='0'
-              imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+              imageSrc='/images/1.png'
             />
             <CustomImage
               width={400}
               radius='0'
-              imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+              imageSrc='/images/3.png'
             />
           </div>
           <div

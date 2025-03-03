@@ -5,6 +5,7 @@ import CustomImage from '@/components/customImage/customImage';
 import RecipeCard from '@/components/recipeCard/recipeCard';
 import Link from 'next/link';
 import CustomIcon from '@/components/customIcon/customIcon';
+import LogoImage from '@/components/logoImage/logoImage';
 
 interface LandingPageProps {
   textColor?: string;
@@ -27,10 +28,14 @@ function LandingPageClient({
         className={`flex flex-row p-10 px-40 gap-10 justify-center ${bgColor}`}
       >
         <div className='flex flex-col gap-16'>
-          <div className='w-8 h-8 rounded-full bg-gray-400 mr-2' />
+          <div className='flex flex-row items-center'>
+            <LogoImage width={42} />
+            <h1>KoiPad</h1>
+          </div>
           <div className='flex flex-col gap-4'>
             <h1 className='w-full text-[40px] leading-[44px] tracking[-0.03em] font-semibold text-left'>
-              Welcome to KoiPad, Your Culinary Treasure Trove
+              Welcome to KoiPad, Your Culinary{' '}
+              <span className='text-rose-500'>Treasure Trove</span>
             </h1>
             <h2 className='w-full text-left'>
               Cook, Share, and Celebrate the Flavors of Life!
@@ -52,9 +57,9 @@ function LandingPageClient({
         </div>
         <div className='flex items-center'>
           <CustomImage
-            width={800}
+            width={900}
             radius='md'
-            imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+            imageSrc='/images/lp.png'
           />
         </div>
       </div>
@@ -171,7 +176,7 @@ function LandingPageClient({
 
         <CustomImage
           width={400}
-          imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+          imageSrc='/images/overview.png'
         />
       </div>
       <div className='flex flex-row w-full gap-2 py-8 justify-center items-center'>
@@ -184,7 +189,7 @@ function LandingPageClient({
         </div>
         <CustomImage
           width={400}
-          imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+          imageSrc='/images/notes.png'
         />
       </div>
       <div
@@ -199,7 +204,7 @@ function LandingPageClient({
         </div>
         <CustomImage
           width={400}
-          imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+          imageSrc='/images/ingredients.png'
         />
       </div>
     </div>

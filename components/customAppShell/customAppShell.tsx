@@ -10,6 +10,8 @@ import { useHeadroom } from '@mantine/hooks';
 import Link from 'next/link';
 import ProfileComponent from '../profileComponent/profileComponent';
 
+import LogoImage from '../logoImage/logoImage';
+
 interface CustomAppShellProps {
   children: ReactNode;
   padding?: MantineSpacing;
@@ -56,7 +58,8 @@ function CustomAppShell({
           align={'center'}
         >
           <Flex align={'center'}>
-            <div className='w-8 h-8 rounded-full bg-gray-400 mr-2' />{' '}
+            <LogoImage width={36} />
+
             <UnstyledButton
               component={Link}
               href={'/'}

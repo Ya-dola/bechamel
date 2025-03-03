@@ -7,6 +7,7 @@ import CustomTextInput from '@/components/customTextInput/customTextInput';
 import GradientCard from '@/components/gradientCard/gradientCard';
 import CustomImage from '@/components/customImage/customImage';
 import { supabase } from '@/services/supabase_service';
+import LogoImage from '../logoImage/logoImage';
 
 interface ForgotPasswordFormValues {
   email: string;
@@ -51,12 +52,12 @@ function ForgotPasswordForm() {
 
   return (
     <div
-      className='flex flex-row items-center w-6xl min-h-196 
-    px-8 py-12 space-y-6 border-2 border-slate-400 rounded-2xl gap-x-24'
+      className='flex flex-row items-center w-6xl min-h-80 
+    px-8 py-12 space-y-6 bg-white rounded-2xl gap-x-24'
     >
       <div className='flex flex-col gap-6 w-full'>
         <div className='flex flex-row flex-wrap gap-2 items-center'>
-          <div className='w-8 h-8 rounded-full bg-gray-400' />
+          <LogoImage />
           <p>KoiPad</p>
         </div>
         <div className='flex flex-col gap-1'>
@@ -121,7 +122,7 @@ function ForgotPasswordForm() {
         className='h-fit w-4xl rounded-xl gap-12'
         padding='px-8 py-24'
       >
-        <CustomImage imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png' />
+        <CustomImage imageSrc='/images/1.png' />
         <p className='text-2xl font-bold text-white text-center'>
           Manage and Share Recipes!
         </p>

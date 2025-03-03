@@ -2,7 +2,7 @@ import SignUpForm from '@/components/signUpForm/signUpForm';
 
 function SignUpClient() {
   return (
-    <div className='flex flex-col items-center justify-center w-full h-lvh'>
+    <div className='flex flex-col bg-slate-100 items-center justify-center w-full h-lvh'>
       <SignUpForm />
     </div>
   );
