@@ -6,6 +6,7 @@ import CustomMultiSelect from '@/components/customMultiSelect/customMultiSelect'
 import RecipeCard from '@/components/recipeCard/recipeCard';
 import { useFetchAll } from '@/hooks/useFetchAll';
 import { RecipeRecord } from '@/services/supabase_service';
+import AuthenticatedPage from '@/components/authenticated_page/authenticated_page';
 
 function RecipeListClient() {
   // Fetch categories from the 'categories' table
@@ -97,60 +98,62 @@ function RecipeListClient() {
   }, [refetchRecipes, refetchCategories, refetchRC]);
 
   return (
-    <CustomAppShell padding={0}>
-      <div className='flex flex-col px-40 justify-center w-full'>
-        <div className='flex flex-row justify-between py-16'>
-          <h2 className='text-xl text-left font-semibold'>My Recipes</h2>
-          <CustomMultiSelect
-            items={
-              categoriesData?.data && Array.isArray(categoriesData.data)
-                ? categoriesData.data.map((cat: { name: string }) => cat.name)
-                : []
-            }
-            onChange={(selected: string[]) => setSelectedCategories(selected)}
-          />
+    <AuthenticatedPage>
+      <CustomAppShell padding={0}>
+        <div className='flex flex-col px-40 justify-center w-full'>
+          <div className='flex flex-row justify-between py-16'>
+            <h2 className='text-xl text-left font-semibold'>My Recipes</h2>
+            <CustomMultiSelect
+              items={
+                categoriesData?.data && Array.isArray(categoriesData.data)
+                  ? categoriesData.data.map((cat: { name: string }) => cat.name)
+                  : []
+              }
+              onChange={(selected: string[]) => setSelectedCategories(selected)}
+            />
+          </div>
+          {(isLoadingRecipes || isLoadingCategories || isLoadingRC) && (
+            <p className='text-gray-400'>Loading recipes...</p>
+          )}
+          {(errorRecipes || errorCategories || errorRC) && (
+            <p className='text-red-500'>
+              {errorRecipes?.message ||
+                errorCategories?.message ||
+                errorRC?.message}
+            </p>
+          )}
+          <div className='flex flex-wrap  gap-8'>
+            {filteredRecipes.length > 0
+              ? filteredRecipes.map((recipe: RecipeRecord) => (
+                  <RecipeCard
+                    key={recipe.id}
+                    heading={recipe.name}
+                    username={recipe.user_id}
+                    totalTime={recipe.total_time ?? recipe.prep_time}
+                    difficulty={recipe.difficulty}
+                    height={'max-content'}
+                    width={325}
+                    imageSrc={
+                      typeof recipe.images === 'string'
+                        ? recipe.images
+                        : Array.isArray(recipe.images) &&
+                          recipe.images.length > 0 &&
+                          typeof recipe.images[0] === 'object' &&
+                          recipe.images[0] !== null &&
+                          'image' in recipe.images[0]
+                        ? (recipe.images[0] as { image: string }).image
+                        : 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
+                    }
+                    href={`/recipe_page?id=${recipe.id}`}
+                  />
+                ))
+              : !isLoadingRecipes && (
+                  <p className='text-gray-400'>No recipes available.</p>
+                )}
+          </div>
         </div>
-        {(isLoadingRecipes || isLoadingCategories || isLoadingRC) && (
-          <p className='text-gray-400'>Loading recipes...</p>
-        )}
-        {(errorRecipes || errorCategories || errorRC) && (
-          <p className='text-red-500'>
-            {errorRecipes?.message ||
-              errorCategories?.message ||
-              errorRC?.message}
-          </p>
-        )}
-        <div className='flex flex-wrap  gap-8'>
-          {filteredRecipes.length > 0
-            ? filteredRecipes.map((recipe: RecipeRecord) => (
-                <RecipeCard
-                  key={recipe.id}
-                  heading={recipe.name}
-                  username={recipe.user_id}
-                  totalTime={recipe.total_time ?? recipe.prep_time}
-                  difficulty={recipe.difficulty}
-                  height={'max-content'}
-                  width={325}
-                  imageSrc={
-                    typeof recipe.images === 'string'
-                      ? recipe.images
-                      : Array.isArray(recipe.images) &&
-                        recipe.images.length > 0 &&
-                        typeof recipe.images[0] === 'object' &&
-                        recipe.images[0] !== null &&
-                        'image' in recipe.images[0]
-                      ? (recipe.images[0] as { image: string }).image
-                      : 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
-                  }
-                  href={`/recipe_page?id=${recipe.id}`}
-                />
-              ))
-            : !isLoadingRecipes && (
-                <p className='text-gray-400'>No recipes available.</p>
-              )}
-        </div>
-      </div>
-    </CustomAppShell>
+      </CustomAppShell>
+    </AuthenticatedPage>
   );
 }
 
