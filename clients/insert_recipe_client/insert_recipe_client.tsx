@@ -147,16 +147,17 @@ function InsertRecipe() {
 
   return (
     <AuthenticatedPage>
-      <div className='max-w-3xl mx-auto mt-10 p-6 bg-gray-900 text-white rounded shadow'>
+      <div className='max-w-3xl mx-auto mt-10 p-6 bg-white text-gray-700 rounded shadow'>
         <div className='flex justify-between items-center mb-6'>
-          <Button
-            component={Link}
+          <Link
             href='/home_page'
-            variant='outline'
-            color='blue'
+            className='border border-violet-300 bg-white text-gray-800
+               hover:bg-violet-300 hover:text-gray-800
+               transition-colors rounded-xl
+               flex items-center justify-center px-4 h-10'
           >
             Back
-          </Button>
+          </Link>
           <h2 className='text-2xl font-bold text-center flex-1'>
             Insert Recipe
           </h2>
@@ -234,11 +235,10 @@ function InsertRecipe() {
                 onChange={(event) =>
                   field.onChange(event.currentTarget.checked)
                 }
-                color='blue'
+                color={'#DBCDF0'}
               />
             )}
           />
-
           {/* MultiSelect for Categories */}
           <Controller
             control={control}
@@ -261,7 +261,6 @@ function InsertRecipe() {
               />
             )}
           />
-
           {/* Label and File input for images */}
           <div className='flex flex-col'>
             <label className='mb-1 font-medium'>Recipe Images</label>
@@ -277,16 +276,15 @@ function InsertRecipe() {
                   ref={ref}
                   title='Upload Images'
                   className='block w-full text-sm text-gray-500
-                           file:mr-4 file:py-2 file:px-4
-                           file:rounded file:border-0
-                           file:text-sm file:font-semibold
-                           file:bg-blue-50 file:text-blue-700
-                           hover:file:bg-blue-100'
+                             file:mr-4 file:py-2 file:px-4
+                             file:rounded file:border-0
+                             file:text-sm file:font-semibold
+                             file:bg-violet-200 file:text-gray-800
+                             hover:file:bg-violet-100'
                 />
               )}
             />
           </div>
-
           {/* Structured Ingredients */}
           <div className='border p-4 rounded'>
             <h3 className='font-bold mb-2'>Ingredients</h3>
@@ -330,16 +328,17 @@ function InsertRecipe() {
                 </Button>
               </div>
             ))}
-            <Button
-              color='blue'
+            <button
+              className='bg-slate-200 text-black rounded-xl
+               hover:bg-slate-100 transition-all
+               flex items-center justify-center px-4 h-10'
               onClick={() =>
                 appendIngredient({ name: '', amount: 0, unit: '' })
               }
             >
               Add Ingredient
-            </Button>
+            </button>
           </div>
-
           {/* Structured Directions */}
           <div className='border p-4 rounded'>
             <h3 className='font-bold mb-2'>Directions</h3>
@@ -363,22 +362,29 @@ function InsertRecipe() {
                 </Button>
               </div>
             ))}
-            <Button
-              color='blue'
+            <button
+              className='bg-slate-200 text-black rounded-xl
+              hover:bg-slate-100 transition-all
+              flex items-center justify-center px-4 h-10'
               onClick={() => appendDirection({ instruction: '' })}
             >
               Add Direction
-            </Button>
+            </button>
           </div>
-
-          <Button
+          <button
             type='submit'
-            loading={isPending}
-            color='blue'
-            className='w-full'
+            className={`rounded-xl transition-colors flex items-center
+                justify-center text-sm h-10 w-full
+                px-4 bg-violet-300 text-black
+                ${
+                  isPending
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:bg-white hover:border hover:border-violet-400'
+                }`} // Handle loading state
+            disabled={isPending} // Disable button when loading
           >
-            Insert Recipe
-          </Button>
+            {isPending ? 'Loading...' : 'Insert Recipe'}
+          </button>
         </form>
       </div>
     </AuthenticatedPage>
