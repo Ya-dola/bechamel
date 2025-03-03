@@ -9,7 +9,7 @@ interface RecipeCardProps {
   username?: string;
   href?: string;
   imageSrc?: string;
-  height?: number;
+  height?: number | string;
   width?: number;
   radius?: string;
   bgColor?: string;
