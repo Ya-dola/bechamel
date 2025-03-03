@@ -207,6 +207,7 @@ export interface RecipeRecord {
   created_at: string;
   updated_at: string;
   deleted_at?: string | null;
+  difficulty?: string;
 }
 
 /**
