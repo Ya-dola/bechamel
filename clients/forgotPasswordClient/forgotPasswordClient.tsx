@@ -2,7 +2,7 @@ import ForgotPasswordForm from '@/components/forgotPasswordForm/forgotPasswordFo
 
 function ForgotPasswordClient() {
   return (
-    <div className='flex flex-col items-center justify-center w-full h-lvh'>
+    <div className='flex flex-col items-center bg-slate-100 justify-center w-full h-lvh'>
       <ForgotPasswordForm />
     </div>
   );
