@@ -128,7 +128,7 @@ function RecipeListClient() {
                   heading={recipe.name}
                   username={recipe.user_id}
                   totalTime={recipe.total_time ?? recipe.prep_time}
-                  difficulty={recipe.difficulty || 'Unknown'}
+                  difficulty={recipe.difficulty}
                   height={'max-content'}
                   width={325}
                   imageSrc={
@@ -142,7 +142,7 @@ function RecipeListClient() {
                       ? (recipe.images[0] as { image: string }).image
                       : 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
                   }
-                  href={`/view_recipe?id=${recipe.id}`}
+                  href={`/recipe_page?id=${recipe.id}`}
                 />
               ))
             : !isLoadingRecipes && (
