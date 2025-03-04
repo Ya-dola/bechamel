@@ -61,12 +61,16 @@ function RecipeCard({
     >
       <Card.Section>
         {imageSrc ? (
-          <Image
-            width={'auto'}
-            radius={'md'}
-            src={imageSrc}
-            alt={'My image'}
-          />
+          <div className='relative h-[170px] overflow-hidden rounded-md'>
+            <Image
+              src={imageSrc}
+              width={width}
+              alt={heading} // Make the alt attribute descriptive
+              style={{
+                objectFit: 'cover', // Ensure the image covers its container
+              }}
+            />
+          </div>
         ) : null}
       </Card.Section>
 
