@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import DirectionsCards from '@/components/directionsCard/directionsCard';
+import DirectionsCard from '@/components/directionsCard/directionsCard';
 import CustomBadge from '@/components/customBadge/customBadge';
 import IconCard from '@/components/iconCard/iconCard';
 import IngredientCard from '@/components/ingredientCard/ingredientCard';
@@ -30,7 +30,7 @@ function TestClient() {
         <div className='flex flex-row flex-wrap p-8 gap-4'>
           <LineBookCard />
           <IngredientCard />
-          <DirectionsCards />
+          <DirectionsCard />
           <NotesCard />
           <IconCard label={'Label'} />
           <IconCard

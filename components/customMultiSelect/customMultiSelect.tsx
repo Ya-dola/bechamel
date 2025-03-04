@@ -1,22 +1,20 @@
-import React from 'react';
-import { MultiSelect } from '@mantine/core';
+import { MultiSelect, MultiSelectProps } from '@mantine/core';
 
-interface MultiSelectProps {
-  items?: string[]; // Define that items is an optional array of strings
+interface CustomMultiSelectProps extends MultiSelectProps {
+  items: string[];
 }
 
-const CustomMultiSelect: React.FC<MultiSelectProps> = ({ items = [] }) => {
-  // Default to an empty array
+function CustomMultiSelect({ items = [], ...rest }: CustomMultiSelectProps) {
   return (
     <div className='relative'>
       <MultiSelect
-        label='' // You can set a label if needed
         placeholder='Filter Categories'
-        data={items} // Pass items directly without wrapping in another array
+        data={items}
         clearable
+        {...rest}
       />
     </div>
   );
-};
+}
 
 export default CustomMultiSelect;
