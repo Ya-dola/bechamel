@@ -111,7 +111,7 @@ function RecipePageClient() {
       ? (recipe.images[0] as { image: string }).image
       : 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png';
 
-  // Ensure ingredients and directions are parsed
+  // Ensure ingredients, directions, and notes are parsed
   const ingredients =
     typeof recipe.ingredients === 'string'
       ? JSON.parse(recipe.ingredients)
@@ -120,6 +120,10 @@ function RecipePageClient() {
     typeof recipe.directions === 'string'
       ? JSON.parse(recipe.directions)
       : recipe.directions;
+  const notes =
+    typeof recipe.notes === 'string'
+      ? JSON.parse(recipe.notes)
+      : recipe.notes || [];
 
   return (
     <AuthenticatedPage>
@@ -185,11 +189,11 @@ function RecipePageClient() {
         </div>
         <div className='flex flex-row p-10 px-40 gap-10 justify-center'>
           <div className='flex flex-col gap-8'>
-            <IngredientCard items={ingredients} />
-            <NotesCard />
+            {ingredients.length > 0 && <IngredientCard items={ingredients} />}
+            {notes.length > 0 && <NotesCard items={notes} />}
           </div>
           <div>
-            <DirectionsCard items={directions} />
+            {directions.length > 0 && <DirectionsCard items={directions} />}
           </div>
         </div>
       </CustomAppShell>

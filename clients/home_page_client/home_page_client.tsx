@@ -10,6 +10,7 @@ import AuthenticatedPage from '@/components/authenticated_page/authenticated_pag
 import { useEffect } from 'react';
 import { useFetchAll } from '@/hooks/useFetchAll';
 import { RecipeRecord } from '@/services/supabase_service';
+import { getDifficultyText } from '@/enums/difficultyEnum';
 
 interface HomePageClientProps {
   textColor?: string;
@@ -135,7 +136,7 @@ function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
                         heading={recipe.name}
                         username={recipe.user_id}
                         totalTime={recipe.total_time ?? recipe.prep_time}
-                        difficulty={recipe.difficulty}
+                        difficulty={getDifficultyText(recipe.difficulty ?? 0)}
                         height={'max-content'}
                         width={325}
                         imageSrc={

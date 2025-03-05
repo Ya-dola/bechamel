@@ -7,6 +7,7 @@ import RecipeCard from '@/components/recipeCard/recipeCard';
 import { useFetchAll } from '@/hooks/useFetchAll';
 import { RecipeRecord } from '@/services/supabase_service';
 import AuthenticatedPage from '@/components/authenticated_page/authenticated_page';
+import { getDifficultyText } from '@/enums/difficultyEnum';
 
 function RecipeListClient() {
   // Fetch categories from the 'categories' table
@@ -130,7 +131,7 @@ function RecipeListClient() {
                     heading={recipe.name}
                     username={recipe.user_id}
                     totalTime={recipe.total_time ?? recipe.prep_time}
-                    difficulty={recipe.difficulty}
+                    difficulty={getDifficultyText(recipe.difficulty ?? 0)}
                     height={'max-content'}
                     width={325}
                     imageSrc={
