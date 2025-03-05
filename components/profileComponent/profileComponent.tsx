@@ -20,6 +20,8 @@ function ProfileComponent() {
       } catch (error) {
         console.error('Error signing out:', error);
       }
+    } else if (option === 'Settings') {
+      router.push('/resetPassword');
     }
     setIsOpen(false); // Close dropdown after selection
   };

@@ -18,6 +18,18 @@ interface HomePageClientProps {
   buttonHoveredColor?: string;
   buttonBorderColor?: string;
 }
+const iconCardsData = [
+  { label: 'Soups', bgColor: 'bg-green-200' },
+  { label: 'Salads', bgColor: 'bg-red-200' },
+  { label: 'Mains', bgColor: 'bg-blue-200' },
+  { label: 'Desserts', bgColor: 'bg-yellow-200' },
+  { label: 'Drinks', bgColor: 'bg-purple-200' },
+  { label: 'Breakfast', bgColor: 'bg-green-200' },
+  { label: 'Lunch', bgColor: 'bg-red-200' },
+  { label: 'Dinner', bgColor: 'bg-blue-200' },
+  { label: 'Brunch', bgColor: 'bg-yellow-200' },
+  { label: 'Snacks', bgColor: 'bg-purple-200' },
+];
 
 function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
   // Fetch recipes from the 'recipes' table
@@ -81,14 +93,18 @@ function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
                 iconSize={'25'}
               />
             </div>
-            <div className='flex flex-row gap-2'>
-              <IconCard
-                label={'Prep Time'}
-                subText={'5 min'}
-                bgColor={'bg-green-200'}
-                labelColor={'text-slate-700'}
-                subTextColor={'text-slate-900'}
-              />
+            <div className='flex flex-row gap-2 justify-between'>
+              {iconCardsData.slice(0, 10).map((item, index) => (
+                <IconCard
+                  key={index}
+                  icon={'line-md:circle'}
+                  iconSize={'16'}
+                  label={item.label}
+                  bgColor={item.bgColor}
+                  labelColor={'text-slate-700'}
+                  subTextColor={'text-slate-900'}
+                />
+              ))}
             </div>
           </div>
           <div className={`flex flex-col w-full py-8 px-40 gap-8  ${bgColor}`}>

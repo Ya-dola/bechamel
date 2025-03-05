@@ -79,7 +79,7 @@ function CustomAppShell({
               Home
             </Link>
             <Link
-              href='/supabase'
+              href='/home_page'
               className={`rounded-full transition-colors flex items-center justify-center  ${textColor} text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44 hover:underline`}
             >
               Browse Recipes
