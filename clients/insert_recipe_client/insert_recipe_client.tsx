@@ -10,16 +10,17 @@ import {
   MultiSelect,
 } from '@mantine/core';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useInsertRecipe } from '@/hooks/useInsertRecipe';
 import { useFetchAll } from '@/hooks/useFetchAll';
-import { useRouter } from 'next/navigation';
 import {
   uploadImages,
   insertRecipeCategories,
 } from '@/services/supabase_service';
 import { Json } from '@/models/json';
 import AuthenticatedPage from '@/components/authenticated_page/authenticated_page';
-import { useState } from 'react';
+// import { useAuthStore } from '@/stores/auth_store';
 
 interface Ingredient {
   name: string;
@@ -31,30 +32,39 @@ interface DirectionStep {
   instruction: string;
 }
 
+interface Note {
+  note: string;
+}
+
 interface RecipeFormValues {
   user_id: string;
   name: string;
-  description?: string;
-  difficulty?: number;
+  difficulty: number;
   prep_time: number;
   cook_time?: number;
   servings?: number;
   shared?: boolean;
   ingredients: Ingredient[];
   directions: DirectionStep[];
+  notes?: Note[] | null;
   images: FileList | null;
   videos: null;
   categories: number[]; // Selected category IDs (for join table)
 }
 
 function InsertRecipe() {
+  // const { session } = useAuthStore();
+  // const userId = session?.user?.id ?? '';
+
+  // console.log('userId:', userId);
+
   const { register, handleSubmit, control, reset, setValue } =
     useForm<RecipeFormValues>({
       defaultValues: {
-        // Use a valid user_id from your auth.users table.
+        // TODO: Use a valid user_id from your auth.users table.
         user_id: process.env.NEXT_PUBLIC_TEST_USER_ID ?? '',
+        // user_id: userId,
         name: '',
-        description: '',
         difficulty: 0,
         prep_time: 0,
         cook_time: 0,
@@ -62,12 +72,15 @@ function InsertRecipe() {
         shared: false,
         ingredients: [{ name: '', amount: 0, unit: '' }],
         directions: [{ instruction: '' }],
+        notes: null,
         images: null,
         videos: null,
         categories: [],
       },
+      mode: 'onChange',
     });
 
+  // Field arrays for structured fields
   const {
     fields: ingredientFields,
     append: appendIngredient,
@@ -86,6 +99,15 @@ function InsertRecipe() {
     name: 'directions',
   });
 
+  const {
+    fields: noteFields,
+    append: appendNote,
+    remove: removeNote,
+  } = useFieldArray({
+    control,
+    name: 'notes',
+  });
+
   // Fetch categories using useFetchAll (table: 'categories') with pagination disabled.
   const { data: categoriesData, isLoading: categoriesLoading } = useFetchAll({
     table: 'categories',
@@ -99,6 +121,12 @@ function InsertRecipe() {
         label: cat.name,
       }),
     ) || [];
+
+  const [difficulty, setDifficulty] = useState<number>(0);
+  const handleDifficultyChange = (value: number) => {
+    setDifficulty(value);
+    setValue('difficulty', value);
+  };
 
   const { mutateAsync, isPending } = useInsertRecipe();
   const router = useRouter();
@@ -128,6 +156,7 @@ function InsertRecipe() {
       total_time: computedTotalTime,
       ingredients: values.ingredients as unknown as Json,
       directions: values.directions as unknown as Json,
+      notes: values.notes as unknown as Json,
       images: imageUrls,
     };
 
@@ -142,18 +171,11 @@ function InsertRecipe() {
         await insertRecipeCategories(newRecipe.id, categories);
       }
       reset();
-      router.push('/supabase');
+      router.push(`/recipe_page?id=${newRecipe?.id}`);
     } catch (error) {
       console.error('Error inserting recipe or categories:', error);
       alert('Failed to insert recipe');
     }
-  };
-
-  const [difficulty, setDifficulty] = useState<number | null>(null); // State for difficulty
-
-  const handleDifficultyChange = (value: number) => {
-    setDifficulty(value);
-    setValue('difficulty', value); // Update the form state with the selected difficulty
   };
 
   return (
@@ -163,9 +185,9 @@ function InsertRecipe() {
           <Link
             href='/home_page'
             className='border border-violet-300 bg-white text-gray-800
-               hover:bg-violet-300 hover:text-gray-800
-               transition-colors rounded-xl
-               flex items-center justify-center px-4 h-10'
+             hover:bg-violet-300 hover:text-gray-800
+              transition-colors rounded-xl
+              flex items-center justify-center px-4 h-10'
           >
             Back
           </Link>
@@ -228,10 +250,9 @@ function InsertRecipe() {
             <input
               type='hidden'
               {...register('difficulty')}
-              value={difficulty ?? undefined}
+              value={difficulty}
             />
           </div>
-
           <Controller
             control={control}
             name='prep_time'
@@ -380,6 +401,7 @@ function InsertRecipe() {
               </div>
             ))}
             <button
+              type='button'
               className='bg-slate-200 text-black rounded-md
                hover:bg-slate-100 transition-all
                flex items-center justify-center px-4 h-10'
@@ -414,12 +436,46 @@ function InsertRecipe() {
               </div>
             ))}
             <button
+              type='button'
               className='bg-slate-200 text-black rounded-md
               hover:bg-slate-100 transition-all
               flex items-center justify-center px-4 h-10'
               onClick={() => appendDirection({ instruction: '' })}
             >
               Add Direction
+            </button>
+          </div>
+          {/* Structured Notes */}
+          <div className='border p-4 rounded'>
+            <h3 className='font-bold mb-2'>Notes</h3>
+            {noteFields.map((field, index) => (
+              <div
+                key={field.id}
+                className='flex gap-2 mb-2'
+              >
+                <Textarea
+                  placeholder={`Note ${index + 1}`}
+                  {...register(`notes.${index}.note` as const, {
+                    required: true,
+                  })}
+                  className='flex-1'
+                />
+                <Button
+                  color='red'
+                  onClick={() => removeNote(index)}
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+            <button
+              type='button'
+              className='bg-slate-200 text-black rounded-md
+               hover:bg-slate-100 transition-all
+               flex items-center justify-center px-4 h-10'
+              onClick={() => appendNote({ note: '' })}
+            >
+              Add Note
             </button>
           </div>
           <button

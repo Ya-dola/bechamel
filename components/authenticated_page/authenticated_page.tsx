@@ -42,10 +42,10 @@ export default function AuthenticatedPage({
 
   if (localLoading) {
     return (
-      <div className='flex items-center justify-center min-h-screen bg-black text-white'>
+      <div className='flex items-center justify-center min-h-screen'>
         <Loader
-          color='blue'
-          size='lg'
+          color={'#DBCDF0'}
+          size={'lg'}
         />
       </div>
     );

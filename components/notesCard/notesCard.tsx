@@ -1,10 +1,18 @@
 import LineBookCard from '@/components/lineBookCard/lineBookCard';
 
-function NotesCard() {
+interface Note {
+  note: string;
+}
+interface NotesCardProps {
+  items?: Note[];
+}
+
+function NotesCard({ items = [] }: NotesCardProps) {
+  const formattedItems = items.map((item) => item.note);
   return (
     <LineBookCard
       title={'Notes'}
-      items={['note 1', 'note 2']}
+      items={formattedItems}
       displayMode={'none'}
     />
   );
