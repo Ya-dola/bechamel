@@ -19,6 +19,7 @@ import {
 } from '@/services/supabase_service';
 import { Json } from '@/models/json';
 import AuthenticatedPage from '@/components/authenticated_page/authenticated_page';
+import { useState } from 'react';
 
 interface Ingredient {
   name: string;
@@ -34,6 +35,7 @@ interface RecipeFormValues {
   user_id: string;
   name: string;
   description?: string;
+  difficulty?: number;
   prep_time: number;
   cook_time?: number;
   servings?: number;
@@ -46,23 +48,25 @@ interface RecipeFormValues {
 }
 
 function InsertRecipe() {
-  const { register, handleSubmit, control, reset } = useForm<RecipeFormValues>({
-    defaultValues: {
-      // Use a valid user_id from your auth.users table.
-      user_id: process.env.NEXT_PUBLIC_TEST_USER_ID ?? '',
-      name: '',
-      description: '',
-      prep_time: 0,
-      cook_time: 0,
-      servings: 0,
-      shared: false,
-      ingredients: [{ name: '', amount: 0, unit: '' }],
-      directions: [{ instruction: '' }],
-      images: null,
-      videos: null,
-      categories: [],
-    },
-  });
+  const { register, handleSubmit, control, reset, setValue } =
+    useForm<RecipeFormValues>({
+      defaultValues: {
+        // Use a valid user_id from your auth.users table.
+        user_id: process.env.NEXT_PUBLIC_TEST_USER_ID ?? '',
+        name: '',
+        description: '',
+        difficulty: 0,
+        prep_time: 0,
+        cook_time: 0,
+        servings: 0,
+        shared: false,
+        ingredients: [{ name: '', amount: 0, unit: '' }],
+        directions: [{ instruction: '' }],
+        images: null,
+        videos: null,
+        categories: [],
+      },
+    });
 
   const {
     fields: ingredientFields,
@@ -145,6 +149,13 @@ function InsertRecipe() {
     }
   };
 
+  const [difficulty, setDifficulty] = useState<number | null>(null); // State for difficulty
+
+  const handleDifficultyChange = (value: number) => {
+    setDifficulty(value);
+    setValue('difficulty', value); // Update the form state with the selected difficulty
+  };
+
   return (
     <AuthenticatedPage>
       <div className='max-w-3xl mx-auto mt-10 p-6 bg-white text-gray-700 rounded shadow'>
@@ -174,13 +185,53 @@ function InsertRecipe() {
             variant='filled'
             className='w-full'
           />
-          <Textarea
-            label='Description'
-            placeholder='Enter recipe description'
-            {...register('description')}
-            variant='filled'
-            className='w-full'
-          />
+          {/* Difficulty Section */}
+          <div className='mt-4'>
+            <label className='block text-sm font-medium text-gray-700 mb-2'>
+              Difficulty
+            </label>
+            <div className='flex space-x-4'>
+              <button
+                type='button'
+                className={`flex-1 py-2 rounded-md text-black ${
+                  difficulty === 0
+                    ? 'bg-violet-300'
+                    : 'border bg-slate-200 hover:bg-slate-300'
+                }`}
+                onClick={() => handleDifficultyChange(0)}
+              >
+                Easy
+              </button>
+              <button
+                type='button'
+                className={`flex-1 py-2 rounded-md text-black ${
+                  difficulty === 1
+                    ? 'bg-violet-300'
+                    : 'border bg-slate-200 hover:bg-slate-300'
+                }`}
+                onClick={() => handleDifficultyChange(1)}
+              >
+                Medium
+              </button>
+              <button
+                type='button'
+                className={`flex-1 py-2 rounded-md text-black ${
+                  difficulty === 2
+                    ? 'bg-violet-300'
+                    : 'border bg-slate-200 hover:bg-slate-300'
+                }`}
+                onClick={() => handleDifficultyChange(2)}
+              >
+                Hard
+              </button>
+            </div>
+            <input
+              type='hidden'
+              {...register('difficulty')}
+              value={difficulty ?? undefined}
+            />
+          </div>
+
           <Controller
             control={control}
             name='prep_time'
@@ -329,7 +380,7 @@ function InsertRecipe() {
               </div>
             ))}
             <button
-              className='bg-slate-200 text-black rounded-xl
+              className='bg-slate-200 text-black rounded-md
                hover:bg-slate-100 transition-all
                flex items-center justify-center px-4 h-10'
               onClick={() =>
@@ -363,7 +414,7 @@ function InsertRecipe() {
               </div>
             ))}
             <button
-              className='bg-slate-200 text-black rounded-xl
+              className='bg-slate-200 text-black rounded-md
               hover:bg-slate-100 transition-all
               flex items-center justify-center px-4 h-10'
               onClick={() => appendDirection({ instruction: '' })}
