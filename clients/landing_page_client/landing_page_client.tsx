@@ -15,6 +15,31 @@ interface LandingPageProps {
   buttonBorderColor?: string;
 }
 
+const iconCardsData = [
+  { label: 'Soups', bgColor: 'bg-green-200', icon: 'lucide:soup' },
+  { label: 'Salads', bgColor: 'bg-red-200', icon: 'lucide:salad' },
+  {
+    label: 'Mains',
+    bgColor: 'bg-blue-200',
+    icon: 'material-symbols:dinner-dining-outline-rounded',
+  },
+  { label: 'Desserts', bgColor: 'bg-yellow-200', icon: 'lucide:dessert' },
+  {
+    label: 'Drinks',
+    bgColor: 'bg-purple-200',
+    icon: 'hugeicons:soft-drink-02',
+  },
+  {
+    label: 'Breakfast',
+    bgColor: 'bg-green-200',
+    icon: 'fluent-mdl2:breakfast',
+  },
+  { label: 'Meat', bgColor: 'bg-red-200', icon: 'mdi:meat-outline' },
+  { label: 'Fish', bgColor: 'bg-blue-200', icon: 'lucide:fish' },
+  { label: 'Vegetarian', bgColor: 'bg-yellow-200', icon: 'lucide:carrot' },
+  { label: 'Sandwiches', bgColor: 'bg-purple-200', icon: 'lucide:sandwich' },
+];
+
 function LandingPageClient({
   textColor = 'text-gray-900',
   bgColor = 'bg-gray-100',
@@ -118,49 +143,19 @@ function LandingPageClient({
             needs!
           </p>
         </div>
-        <div className='flex flex-row justify-center gap-2'>
-          <IconCard
-            label={'Prep Time'}
-            subText={'5 min'}
-            bgColor={'bg-green-200'}
-            labelColor={'text-slate-700'}
-            subTextColor={'text-slate-900'}
-          />
-          <IconCard
-            label={'Prep Time'}
-            subText={'5 min'}
-            bgColor={'bg-green-200'}
-            labelColor={'text-slate-700'}
-            subTextColor={'text-slate-900'}
-          />
-          <IconCard
-            label={'Prep Time'}
-            subText={'5 min'}
-            bgColor={'bg-green-200'}
-            labelColor={'text-slate-700'}
-            subTextColor={'text-slate-900'}
-          />
-          <IconCard
-            label={'Prep Time'}
-            subText={'5 min'}
-            bgColor={'bg-green-200'}
-            labelColor={'text-slate-700'}
-            subTextColor={'text-slate-900'}
-          />
-          <IconCard
-            label={'Prep Time'}
-            subText={'5 min'}
-            bgColor={'bg-green-200'}
-            labelColor={'text-slate-700'}
-            subTextColor={'text-slate-900'}
-          />
-          <IconCard
-            label={'Prep Time'}
-            subText={'5 min'}
-            bgColor={'bg-green-200'}
-            labelColor={'text-slate-700'}
-            subTextColor={'text-slate-900'}
-          />
+
+        <div className='flex flex-row gap-2 justify-between'>
+          {iconCardsData.slice(0, 10).map((item, index) => (
+            <IconCard
+              key={index}
+              icon={item.icon}
+              iconSize={'16'}
+              label={item.label}
+              bgColor={item.bgColor}
+              labelColor={'text-slate-700'}
+              subTextColor={'text-slate-900'}
+            />
+          ))}
         </div>
       </div>
       <div

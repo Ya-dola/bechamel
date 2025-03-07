@@ -19,17 +19,30 @@ interface HomePageClientProps {
   buttonHoveredColor?: string;
   buttonBorderColor?: string;
 }
+
 const iconCardsData = [
-  { label: 'Soups', bgColor: 'bg-green-200' },
-  { label: 'Salads', bgColor: 'bg-red-200' },
-  { label: 'Mains', bgColor: 'bg-blue-200' },
-  { label: 'Desserts', bgColor: 'bg-yellow-200' },
-  { label: 'Drinks', bgColor: 'bg-purple-200' },
-  { label: 'Breakfast', bgColor: 'bg-green-200' },
-  { label: 'Lunch', bgColor: 'bg-red-200' },
-  { label: 'Dinner', bgColor: 'bg-blue-200' },
-  { label: 'Brunch', bgColor: 'bg-yellow-200' },
-  { label: 'Snacks', bgColor: 'bg-purple-200' },
+  { label: 'Soups', bgColor: 'bg-green-200', icon: 'lucide:soup' },
+  { label: 'Salads', bgColor: 'bg-red-200', icon: 'lucide:salad' },
+  {
+    label: 'Mains',
+    bgColor: 'bg-blue-200',
+    icon: 'material-symbols:dinner-dining-outline-rounded',
+  },
+  { label: 'Desserts', bgColor: 'bg-yellow-200', icon: 'lucide:dessert' },
+  {
+    label: 'Drinks',
+    bgColor: 'bg-purple-200',
+    icon: 'hugeicons:soft-drink-02',
+  },
+  {
+    label: 'Breakfast',
+    bgColor: 'bg-green-200',
+    icon: 'fluent-mdl2:breakfast',
+  },
+  { label: 'Meat', bgColor: 'bg-red-200', icon: 'mdi:meat-outline' },
+  { label: 'Fish', bgColor: 'bg-blue-200', icon: 'lucide:fish' },
+  { label: 'Vegetarian', bgColor: 'bg-yellow-200', icon: 'lucide:carrot' },
+  { label: 'Sandwiches', bgColor: 'bg-purple-200', icon: 'lucide:sandwich' },
 ];
 
 function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
@@ -98,7 +111,7 @@ function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
               {iconCardsData.slice(0, 10).map((item, index) => (
                 <IconCard
                   key={index}
-                  icon={'line-md:circle'}
+                  icon={item.icon}
                   iconSize={'16'}
                   label={item.label}
                   bgColor={item.bgColor}
