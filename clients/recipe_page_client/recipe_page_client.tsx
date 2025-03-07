@@ -159,7 +159,7 @@ function RecipePageClient() {
                 <div className='flex flex-row gap-2 items-center'>
                   <Link
                     className='px-4 h-8 flex bg-gray-300  items-center border-black rounded-full hover:bg-gray-400'
-                    href={'/update_recipe'}
+                    href={`update_recipe?id=${recipeId} `}
                   >
                     Edit
                   </Link>

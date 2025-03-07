@@ -514,7 +514,7 @@ function UpdateRecipeClient() {
                 }`}
             disabled={isPending} // Disable button when loading
           >
-            {isPending ? 'Loading...' : 'Insert Recipe'}
+            {isPending ? 'Loading...' : 'Update Recipe'}
           </button>
         </form>
       </div>
