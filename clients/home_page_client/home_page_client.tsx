@@ -161,47 +161,16 @@ function HomePageClient({ bgColor = 'bg-gray-100' }: HomePageClientProps) {
           </div>
         </div>
         <div className={`flex flex-col w-full py-8 px-40 gap-8  ${bgColor}`}>
-          <div className='flex flex-row gap-2 items-center'>
+          <Link
+            href='/coming_soon'
+            className='flex flex-row gap-2 items-center'
+          >
             <h2 className='text-xl font-semibold'>My Favourites</h2>
             <CustomIcon
               icon={'line-md:chevron-right'}
               iconSize={'25'}
             />
-          </div>
-          <div className='flex flex-row gap-8'>
-            <RecipeCard
-              heading='Pancake'
-              username='Firt name lastname'
-              totalTime={60}
-              difficulty={'hard'}
-              width={300}
-              imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
-            />
-            <RecipeCard
-              heading='Pancake'
-              username='Firt name lastname'
-              totalTime={60}
-              difficulty={'hard'}
-              width={300}
-              imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
-            />
-            <RecipeCard
-              heading='Pancake'
-              username='Firt name lastname'
-              totalTime={60}
-              difficulty={'hard'}
-              width={300}
-              imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
-            />
-            <RecipeCard
-              heading='Pancake'
-              username='Firt name lastname'
-              totalTime={60}
-              difficulty={'hard'}
-              width={300}
-              imageSrc='https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'
-            />
-          </div>
+          </Link>
         </div>
         <div className='flex flex-row items-center overflow-hidden w-full'>
           <CustomImage

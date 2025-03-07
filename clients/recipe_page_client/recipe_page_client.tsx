@@ -13,6 +13,7 @@ import { fetch, fetchAll } from '@/services/supabase_service';
 import { RecipeRecord } from '@/services/supabase_service';
 import DirectionsCard from '@/components/directionsCard/directionsCard';
 import AuthenticatedPage from '@/components/authenticated_page/authenticated_page';
+import Link from 'next/link';
 
 function RecipePageClient() {
   const searchParams = useSearchParams();
@@ -128,7 +129,16 @@ function RecipePageClient() {
   return (
     <AuthenticatedPage>
       <CustomAppShell padding={0}>
-        <div className='flex flex-row p-10 px-40 gap-10 justify-center bg-gray-100'>
+        <div className='flex flex-row items-center px-40 py-4 bg-gray-100'>
+          <Icon icon={'line-md:arrow-left'} />
+          <Link
+            href='/recipe_list'
+            className={`rounded-full transition-colors flex items-center  text-sm sm:text-base h-10 sm:h-12 px-2 sm:min-w-44 hover:underline`}
+          >
+            Back
+          </Link>
+        </div>
+        <div className='flex flex-row p-10 px-90 gap-30 justify-between bg-gray-100'>
           <div className='flex flex-col gap-8 justify-between'>
             <div className='flex flex-col gap-2'>
               <div className='flex flex-row justify-between items-center'>
@@ -166,7 +176,7 @@ function RecipePageClient() {
               <IconCard
                 label='Prep Time'
                 subText={`${recipe.prep_time} min`}
-                bgColor='bg-green-200'
+                bgColor='bg-red-200'
                 labelColor='text-slate-700'
                 subTextColor='text-slate-900'
               />
@@ -174,6 +184,20 @@ function RecipePageClient() {
                 label='Cook Time'
                 subText={recipe.cook_time ? `${recipe.cook_time} min` : 'N/A'}
                 bgColor='bg-green-200'
+                labelColor='text-slate-700'
+                subTextColor='text-slate-900'
+              />
+              <IconCard
+                label='Servings'
+                subText={recipe.servings ? `${recipe.servings}` : 'N/A'}
+                bgColor='bg-purple-200'
+                labelColor='text-slate-700'
+                subTextColor='text-slate-900'
+              />
+              <IconCard
+                label='Difficulty'
+                subText={recipe.difficulty ? `${recipe.difficulty}` : 'N/A'}
+                bgColor='bg-blue-200'
                 labelColor='text-slate-700'
                 subTextColor='text-slate-900'
               />
