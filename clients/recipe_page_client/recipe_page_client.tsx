@@ -156,12 +156,20 @@ function RecipePageClient() {
                 <h1 className='w-full text-[40px] leading-[44px] tracking-[-0.03em] font-semibold text-left'>
                   {recipe.name}
                 </h1>
-                <div className='flex items-center justify-center w-8 h-8 border border-black rounded-full'>
-                  <Icon
-                    icon='line-md:heart'
-                    height={20}
-                    width={20}
-                  />
+                <div className='flex flex-row gap-2 items-center'>
+                  <Link
+                    className='px-4 h-8 flex bg-gray-300  items-center border-black rounded-full hover:bg-gray-400'
+                    href={`update_recipe?id=${recipeId} `}
+                  >
+                    Edit
+                  </Link>
+                  <div className='flex items-center justify-center w-8 h-8 border border-black rounded-full'>
+                    <Icon
+                      icon='line-md:heart'
+                      height={20}
+                      width={20}
+                    />
+                  </div>
                 </div>
               </div>
               <div className='flex flex-row gap-1'>
