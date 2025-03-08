@@ -3,10 +3,14 @@ import Dropdown from '../dropdownComponent/dropdownComponent'; // Adjust the pat
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth_store';
 
-function ProfileComponent() {
+interface ProfileComponentsProps {
+  text?: string;
+}
+
+function ProfileComponent({ text = '' }: ProfileComponentsProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const router = useRouter();
-  const { signOut } = useAuthStore();
+  const { session, signOut } = useAuthStore();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -29,10 +33,16 @@ function ProfileComponent() {
   return (
     <div className='relative inline-block text-left'>
       <div
-        className='w-8 h-8 rounded-full bg-gray-400 mr-2 cursor-pointer'
+        className='flex w-8 h-8 items-center justify-center rounded-full bg-gray-400 mr-2 cursor-pointer'
         onClick={toggleDropdown}
-      />
+      >
+        {session?.user?.email
+          ? `${session.user.email.charAt(0).toUpperCase()}${text}`
+          : text}
+      </div>
+
       <Dropdown
+        useremail={`${session?.user.email}`}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onSelect={handleOptionSelect} // Pass the option select handler
