@@ -15,12 +15,13 @@ import { useState } from 'react';
 import { useInsertRecipe } from '@/hooks/useInsertRecipe';
 import { useFetchAll } from '@/hooks/useFetchAll';
 import {
-  uploadImages,
+  uploadImage,
   insertRecipeCategories,
 } from '@/services/supabase_service';
 import { Json } from '@/models/json';
 import AuthenticatedPage from '@/components/authenticated_page/authenticated_page';
-// import { useAuthStore } from '@/stores/auth_store';
+import ImageCropper from '@/components/imageCropper/imageCropper';
+import React from 'react';
 
 interface Ingredient {
   name: string;
@@ -53,17 +54,12 @@ interface RecipeFormValues {
 }
 
 function InsertRecipe() {
-  // const { session } = useAuthStore();
-  // const userId = session?.user?.id ?? '';
-
-  // console.log('userId:', userId);
-
+  // For now, use the test user id; in production, get from your auth store.
+  const userId = process.env.NEXT_PUBLIC_TEST_USER_ID ?? '';
   const { register, handleSubmit, control, reset, setValue } =
     useForm<RecipeFormValues>({
       defaultValues: {
-        // TODO: Use a valid user_id from your auth.users table.
-        user_id: process.env.NEXT_PUBLIC_TEST_USER_ID ?? '',
-        // user_id: userId,
+        user_id: userId,
         name: '',
         difficulty: 0,
         prep_time: 0,
@@ -89,7 +85,6 @@ function InsertRecipe() {
     control,
     name: 'ingredients',
   });
-
   const {
     fields: directionFields,
     append: appendDirection,
@@ -98,7 +93,6 @@ function InsertRecipe() {
     control,
     name: 'directions',
   });
-
   const {
     fields: noteFields,
     append: appendNote,
@@ -108,12 +102,11 @@ function InsertRecipe() {
     name: 'notes',
   });
 
-  // Fetch categories using useFetchAll (table: 'categories') with pagination disabled.
+  // Fetch categories using useFetchAll (table: 'categories') with pagination disabled
   const { data: categoriesData, isLoading: categoriesLoading } = useFetchAll({
     table: 'categories',
     usePagination: false,
   });
-
   const categoryOptions =
     (categoriesData?.data as { id: number; name: string }[] | undefined)?.map(
       (cat) => ({
@@ -122,6 +115,7 @@ function InsertRecipe() {
       }),
     ) || [];
 
+  // Difficulty state
   const [difficulty, setDifficulty] = useState<number>(0);
   const handleDifficultyChange = (value: number) => {
     setDifficulty(value);
@@ -131,63 +125,78 @@ function InsertRecipe() {
   const { mutateAsync, isPending } = useInsertRecipe();
   const router = useRouter();
 
+  // Cropping state
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [showCropper, setShowCropper] = useState<boolean>(false);
+  const [croppedFile, setCroppedFile] = useState<File | null>(null);
+
+  // Image upload state
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
+
   const onSubmit = async (values: RecipeFormValues) => {
-    // Process image uploads if files are selected.
-    let imageUrls: string[] | null = null;
-    if (values.images && values.images.length > 0) {
-      const filesArray = Array.from(values.images);
+    let imageUrl: string | null = null;
+    if (croppedFile) {
       try {
-        imageUrls = await uploadImages(filesArray);
+        setIsUploadingImage(true); // set state true before uploading
+        imageUrl = await uploadImage(croppedFile, userId);
+        setIsUploadingImage(false);
       } catch (error) {
+        setIsUploadingImage(false);
         alert('Image upload failed');
-        console.error(error);
+        console.log('Error uploading image', error);
         return;
       }
     }
 
-    // Extract categories separately so they're not part of the payload.
+    // Extract categories from form values.
     const { categories, ...recipeData } = values;
-
-    // Auto-calculate total_time as prep_time + cook_time (default cook_time to 0 if undefined)
     const computedTotalTime = values.prep_time + (values.cook_time ?? 0);
-
     const recipePayload = {
       ...recipeData,
       total_time: computedTotalTime,
       ingredients: values.ingredients as unknown as Json,
       directions: values.directions as unknown as Json,
       notes: values.notes as unknown as Json,
-      images: imageUrls,
+      images: imageUrl,
     };
 
     try {
       const recipeDataResponse = await mutateAsync(recipePayload);
-      // Assume the inserted recipe is returned as an array.
       const newRecipe = Array.isArray(recipeDataResponse)
         ? recipeDataResponse[0]
         : recipeDataResponse;
-
       if (categories.length > 0 && newRecipe?.id) {
         await insertRecipeCategories(newRecipe.id, categories);
       }
       reset();
       router.push(`/recipe_page?id=${newRecipe?.id}`);
     } catch (error) {
-      console.error('Error inserting recipe or categories:', error);
+      console.log('Error inserting recipe or categories:', error);
       alert('Failed to insert recipe');
     }
   };
 
   return (
     <AuthenticatedPage>
+      {showCropper && selectedFile && (
+        <ImageCropper
+          imageFile={selectedFile}
+          onCropComplete={(cropped) => {
+            setCroppedFile(cropped);
+            setShowCropper(false);
+          }}
+          onCancel={() => {
+            setSelectedFile(null);
+            setCroppedFile(null);
+            setShowCropper(false);
+          }}
+        />
+      )}
       <div className='max-w-3xl mx-auto mt-10 p-6 bg-white text-gray-700 rounded shadow'>
         <div className='flex justify-between items-center mb-6'>
           <Link
             href='/home_page'
-            className='border border-violet-300 bg-white text-gray-800
-             hover:bg-violet-300 hover:text-gray-800
-              transition-colors rounded-xl
-              flex items-center justify-center px-4 h-10'
+            className='border border-violet-300 bg-white text-gray-800 hover:bg-violet-300 hover:text-gray-800 transition-colors rounded-xl flex items-center justify-center px-4 h-10'
           >
             Back
           </Link>
@@ -333,29 +342,80 @@ function InsertRecipe() {
               />
             )}
           />
-          {/* Label and File input for images */}
+          {/* File input for images */}
           <div className='flex flex-col'>
             <label className='mb-1 font-medium'>Recipe Images</label>
-            <Controller
-              control={control}
-              name='images'
-              render={({ field: { onChange, ref } }) => (
-                <input
-                  type='file'
-                  multiple
-                  accept='image/*'
-                  onChange={(e) => onChange(e.target.files)}
-                  ref={ref}
-                  title='Upload Images'
-                  className='block w-full text-sm text-gray-500
-                             file:mr-4 file:py-2 file:px-4
-                             file:rounded file:border-0
-                             file:text-sm file:font-semibold
-                             file:bg-violet-200 file:text-gray-800
-                             hover:file:bg-violet-100'
-                />
-              )}
-            />
+            {/* File info display */}
+            <div className='flex flex-row gap-2 justify-center'>
+              <div
+                className='w-full border rounded px-4 py-2 cursor-pointer'
+                onClick={() => {
+                  // Trigger the hidden file input click.
+                  document.getElementById('fileInput')?.click();
+                }}
+              >
+                <span className='text-sm text-gray-500'>
+                  {selectedFile
+                    ? `${selectedFile.name} - ${
+                        croppedFile
+                          ? (croppedFile.size / (1024 * 1024)).toFixed(2) +
+                            ' MB'
+                          : 'Processing...'
+                      }`
+                    : 'No image chosen'}
+                </span>
+              </div>
+              {/* Buttons container */}
+              <div className='flex gap-2'>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setSelectedFile(null);
+                    setCroppedFile(null);
+                    // Also, clear the file field value for react-hook-form:
+                    reset({ images: null });
+                  }}
+                  className='cursor-pointer w-max rounded-xl transition-colors flex items-center justify-center text-sm h-10 px-4 bg-white border border-violet-300 text-black hover:bg-violet-100 hover:text-black'
+                >
+                  Clear
+                </button>
+                <button
+                  type='button'
+                  onClick={() => {
+                    // Trigger the hidden file input click.
+                    document.getElementById('fileInput')?.click();
+                  }}
+                  className='cursor-pointer w-max rounded-xl transition-colors flex items-center justify-center text-sm h-10 px-4 bg-violet-300 text-black hover:bg-white hover:border hover:border-violet-400'
+                >
+                  Select Image
+                </button>
+              </div>
+              {/* Hidden file input integrated with react-hook-form */}
+              <Controller
+                control={control}
+                name='images'
+                render={({ field: { onChange, ref } }) => (
+                  <input
+                    id='fileInput'
+                    type='file'
+                    accept='image/png, image/jpeg, image/jpg, image/webp'
+                    title='Select an image file'
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        const file = e.target.files[0];
+                        setSelectedFile(file);
+                        setShowCropper(true);
+                      }
+                      onChange(e.target.files);
+                      // Clear native input value so that selecting the same file again will trigger onChange.
+                      e.target.value = '';
+                    }}
+                    ref={ref}
+                    className='hidden'
+                  />
+                )}
+              />
+            </div>
           </div>
           {/* Structured Ingredients */}
           <div className='border p-4 rounded'>
@@ -402,9 +462,7 @@ function InsertRecipe() {
             ))}
             <button
               type='button'
-              className='bg-slate-200 text-black rounded-md
-               hover:bg-slate-100 transition-all
-               flex items-center justify-center px-4 h-10'
+              className='bg-slate-200 text-black rounded-md hover:bg-slate-100 transition-all flex items-center justify-center px-4 h-10'
               onClick={() =>
                 appendIngredient({ name: '', amount: 0, unit: '' })
               }
@@ -437,9 +495,7 @@ function InsertRecipe() {
             ))}
             <button
               type='button'
-              className='bg-slate-200 text-black rounded-md
-              hover:bg-slate-100 transition-all
-              flex items-center justify-center px-4 h-10'
+              className='bg-slate-200 text-black rounded-md hover:bg-slate-100 transition-all flex items-center justify-center px-4 h-10'
               onClick={() => appendDirection({ instruction: '' })}
             >
               Add Direction
@@ -470,9 +526,7 @@ function InsertRecipe() {
             ))}
             <button
               type='button'
-              className='bg-slate-200 text-black rounded-md
-               hover:bg-slate-100 transition-all
-               flex items-center justify-center px-4 h-10'
+              className='bg-slate-200 text-black rounded-md hover:bg-slate-100 transition-all flex items-center justify-center px-4 h-10'
               onClick={() => appendNote({ note: '' })}
             >
               Add Note
@@ -480,17 +534,19 @@ function InsertRecipe() {
           </div>
           <button
             type='submit'
-            className={`rounded-xl transition-colors flex items-center
-                justify-center text-sm h-10 w-full
-                px-4 bg-violet-300 text-black
-                ${
-                  isPending
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:bg-white hover:border hover:border-violet-400'
-                }`} // Handle loading state
-            disabled={isPending} // Disable button when loading
+            className={`cursor-pointer rounded-xl transition-colors flex items-center 
+              justify-center text-sm h-10 w-full px-4 bg-violet-300 text-black ${
+                isPending || isUploadingImage
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:bg-white hover:border hover:border-violet-400'
+              }`}
+            disabled={isPending || isUploadingImage}
           >
-            {isPending ? 'Loading...' : 'Insert Recipe'}
+            {isPending
+              ? 'Adding Recipe...'
+              : isUploadingImage
+              ? 'Uploading Image...'
+              : 'Insert Recipe'}
           </button>
         </form>
       </div>
