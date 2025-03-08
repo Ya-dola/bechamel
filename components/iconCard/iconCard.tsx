@@ -33,7 +33,7 @@ function IconCard({
 }: IconCardProps) {
   return (
     <div
-      className={`flex flex-col items-center justify-center h-fit w-fit fit-content ${cardGap} ${padding} ${bgColor} ${radius}`}
+      className={`flex flex-col items-center justify-center h-fit w-max ${cardGap} ${padding} ${bgColor} ${radius}`}
     >
       {icon && (
         <CustomIcon

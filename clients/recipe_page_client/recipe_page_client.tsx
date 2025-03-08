@@ -14,6 +14,7 @@ import { RecipeRecord } from '@/services/supabase_service';
 import DirectionsCard from '@/components/directionsCard/directionsCard';
 import AuthenticatedPage from '@/components/authenticated_page/authenticated_page';
 import Link from 'next/link';
+import { getDifficultyText } from '@/enums/difficultyEnum';
 
 function RecipePageClient() {
   const searchParams = useSearchParams();
@@ -22,6 +23,7 @@ function RecipePageClient() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [recipeCategories, setRecipeCategories] = useState<string[]>([]);
   const [catLoading, setCatLoading] = useState<boolean>(true);
+  // const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
     if (recipeId) {
@@ -29,6 +31,15 @@ function RecipePageClient() {
       fetch<RecipeRecord>('recipes', recipeId)
         .then((data) => {
           setRecipe(data);
+          // // Fetch the user's email based on user_id
+          // if (data.user_id) {
+          //   fetch<{ email: string }>('users', data.user_id) // Assuming 'fetch' can take a user_id to fetch user data
+          //     .then((userData) => {
+          //       setUserEmail(userData.email); // Store user's email
+          //     })
+          //     .catch((err) => console.error('Error fetching user email:', err));
+          // }
+
           // After recipe is fetched, fetch its categories
           fetchAll({
             table: 'recipe_categories',
@@ -138,7 +149,7 @@ function RecipePageClient() {
             Back
           </Link>
         </div>
-        <div className='flex flex-row p-10 px-90 gap-30 justify-between bg-gray-100'>
+        <div className='flex flex-row p-10 px-90 gap-12 justify-between bg-gray-100'>
           <div className='flex flex-col gap-8 justify-between'>
             <div className='flex flex-col gap-2'>
               <div className='flex flex-row justify-between items-center'>
@@ -155,7 +166,10 @@ function RecipePageClient() {
               </div>
               <div className='flex flex-row gap-1'>
                 <div className='w-8 h-8 rounded-full bg-gray-400 mr-2' />
-                <h2 className='w-full text-left'>{recipe.user_id}</h2>
+                <h2 className='w-full text-left'>
+                  {/* {userEmail || 'Loading email...'} */}
+                  {recipe.user_id}
+                </h2>
               </div>
               <div className='flex flex-row gap-2 w-fit'>
                 {!catLoading ? (
@@ -196,16 +210,16 @@ function RecipePageClient() {
               />
               <IconCard
                 label='Difficulty'
-                subText={recipe.difficulty ? `${recipe.difficulty}` : 'N/A'}
+                subText={getDifficultyText(recipe.difficulty ?? 0)}
                 bgColor='bg-blue-200'
                 labelColor='text-slate-700'
                 subTextColor='text-slate-900'
               />
             </div>
           </div>
-          <div className='flex items-center'>
+          <div className='flex items-center xl:w-2/5'>
             <CustomImage
-              width={600}
+              width={900}
               radius='md'
               imageSrc={imageSrc}
             />
