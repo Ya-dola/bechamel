@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react'; // Import useEffect and useState
+import { useEffect, useState } from 'react';
 import { useFetchAll } from '@/hooks/useFetchAll';
 import {
   uploadImages,
@@ -81,6 +81,8 @@ function UpdateRecipeClient() {
     });
 
   const [initialCategories, setInitialCategories] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
 
   // Field arrays for structured fields
   const {
@@ -130,7 +132,7 @@ function UpdateRecipeClient() {
   // Handle Difficulty Change
   const handleDifficultyChange = (value: number) => {
     setDifficulty(value);
-    setValue('difficulty', value); // Set the difficulty in the form state
+    setValue('difficulty', value);
   };
 
   // Fetch the recipe details to pre-fill the form
@@ -138,8 +140,6 @@ function UpdateRecipeClient() {
     if (recipeId) {
       fetch<RecipeFormValues>('recipes', recipeId)
         .then(async (recipeData) => {
-          console.log('Fetched recipe data:', recipeData); // Check what you are fetching
-
           // Fetch associated categories
           const catResult = await fetchAll({
             table: 'recipe_categories',
@@ -153,7 +153,6 @@ function UpdateRecipeClient() {
             typeof recipeData.ingredients === 'string'
               ? JSON.parse(recipeData.ingredients)
               : recipeData.ingredients || [];
-
           const directions =
             typeof recipeData.directions === 'string'
               ? JSON.parse(recipeData.directions)
@@ -168,10 +167,10 @@ function UpdateRecipeClient() {
             cook_time: recipeData.cook_time || 0,
             servings: recipeData.servings || 0,
             shared: recipeData.shared || false,
-            ingredients: ingredients, // Ensure to populate this correctly
-            directions: directions, // Ensure to populate this correctly
+            ingredients: ingredients,
+            directions: directions,
             notes: recipeData.notes || null,
-            images: null, // Keep the images null because you probably have a separate upload mechanism
+            images: null,
             videos: null,
             categories: recipeCategories,
           };
@@ -179,20 +178,20 @@ function UpdateRecipeClient() {
           // Use reset to fill in the form
           reset(completeData);
           setInitialCategories(completeData.categories);
-          // Check if really needed to set difficulty again amnually
           setDifficulty(completeData.difficulty); // Set difficulty from fetched recipe data
           setValue('difficulty', completeData.difficulty); // Ensure it reflects in the form state
-          console.log('Reset form with:', completeData); // Verify the reset data
         })
         .catch((error) => {
-          console.error('Error fetching recipe:', error);
-          alert('Failed to load recipe for editing');
+          setIsError(true);
+          console.log('Error fetching recipe:', error);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
   }, [recipeId, reset, setValue]);
 
   const onSubmit = async (values: RecipeFormValues) => {
-    // Process image uploads if files are selected.
     let imageUrls: string[] | null = null;
     if (values.images && values.images.length > 0) {
       const filesArray = Array.from(values.images);
@@ -205,28 +204,26 @@ function UpdateRecipeClient() {
       }
     }
 
-    // Exclude categories from the update payload.
     const { categories, ...recipeData } = values;
-    // Auto-calculate total_time as prep_time + cook_time (default cook_time to 0 if undefined)
     const computedTotalTime = values.prep_time + (values.cook_time ?? 0);
 
     const recipePayload = {
-      recipeId: recipeId, // Add the missing recipeId
+      recipeId: recipeId,
       data: {
         total_time: computedTotalTime,
         ingredients: values.ingredients as unknown as Json,
         directions: values.directions as unknown as Json,
         notes: values.notes as unknown as Json,
         images: imageUrls,
-        user_id: recipeData.user_id, // You may need to include user_id if it's part of RecipeInput
-        name: recipeData.name, // Include other necessary fields
+        user_id: recipeData.user_id,
+        name: recipeData.name,
         difficulty: recipeData.difficulty,
         prep_time: recipeData.prep_time,
         cook_time: recipeData.cook_time,
         servings: recipeData.servings,
         shared: recipeData.shared,
         videos: recipeData.videos,
-      } as RecipeRecord, // Cast to the appropriate type if necessary
+      } as RecipeRecord,
     };
 
     try {
@@ -235,7 +232,6 @@ function UpdateRecipeClient() {
         ? updatedData[0]
         : updatedData;
 
-      // Differential update for join records:
       const newCategories = categories;
       const categoriesToAdd = newCategories.filter(
         (cat) => !initialCategories.includes(cat),
@@ -260,6 +256,25 @@ function UpdateRecipeClient() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <AuthenticatedPage>
+        <div className='flex items-center justify-center min-h-screen'>
+          <p className='text-gray-400'>Loading...</p>
+        </div>
+      </AuthenticatedPage>
+    );
+  }
+
+  if (isError) {
+    return (
+      <AuthenticatedPage>
+        <div className='flex items-center justify-center min-h-screen'>
+          <p className='text-gray-400'>Recipe not found.</p>
+        </div>
+      </AuthenticatedPage>
+    );
+  }
   return (
     <AuthenticatedPage>
       <div className='max-w-3xl mx-auto mt-10 p-6 bg-white text-gray-700 rounded shadow'>
@@ -542,7 +557,7 @@ function UpdateRecipeClient() {
                 }`}
             disabled={isPending} // Disable button when loading
           >
-            {isPending ? 'Loading...' : 'Update Recipe'}
+            {isPending ? 'Updating...' : 'Update Recipe'}
           </button>
         </form>
       </div>
