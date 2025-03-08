@@ -33,7 +33,7 @@ function ProfileComponent({ text = '' }: ProfileComponentsProps) {
   return (
     <div className='relative inline-block text-left'>
       <div
-        className='flex w-8 h-8 items-center justify-center rounded-full bg-gray-400 mr-2 cursor-pointer'
+        className='flex w-8 h-8 items-center justify-center rounded-full bg-rose-400 mr-2 cursor-pointer text-black'
         onClick={toggleDropdown}
       >
         {session?.user?.email

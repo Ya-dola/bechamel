@@ -286,6 +286,38 @@ export async function uploadImages(files: File[]): Promise<string[]> {
   );
 }
 
+export async function uploadImage(file: File, userId: string): Promise<string> {
+  if (file.size > MAXIMAGESIZEMB) {
+    throw new Error(
+      `File ${file.name} exceeds the maximum size limit of 6 MB.`,
+    );
+  }
+
+  // Generate a unique file path using the user's id.
+  const filePath = `recipes/${userId}-${Date.now()}-${file.name}`;
+
+  // Upload the file to the 'images' bucket.
+  const { error: uploadError } = await supabase.storage
+    .from('recipe-images')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
+  if (uploadError) {
+    throw uploadError;
+  }
+
+  // Retrieve the public URL of the uploaded image.
+  const { data: urlData } = supabase.storage
+    .from('recipe-images')
+    .getPublicUrl(filePath);
+  if (!urlData) {
+    throw new Error('Failed to retrieve public URL');
+  }
+
+  return urlData.publicUrl;
+}
+
 /**
  * Update an existing recipe.
  * It takes the recipe id and the fields to update.
