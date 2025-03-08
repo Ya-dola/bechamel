@@ -1,13 +1,18 @@
-// Dropdown.tsx
 import React from 'react';
 
 interface DropdownProps {
+  useremail: string;
   isOpen: boolean;
   onClose: () => void;
   onSelect: (option: string) => void;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ isOpen, onClose, onSelect }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+  isOpen,
+  onClose,
+  onSelect,
+  useremail = '',
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -18,6 +23,7 @@ const Dropdown: React.FC<DropdownProps> = ({ isOpen, onClose, onSelect }) => {
         aria-orientation='vertical'
         aria-labelledby='options-menu'
       >
+        <text className='flex justify-center py-2'>{useremail}</text>
         <button
           className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left'
           onClick={() => {
