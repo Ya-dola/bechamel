@@ -12,16 +12,18 @@ import {
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react'; // Import useEffect and useState
-import { useInsertRecipe } from '@/hooks/useInsertRecipe';
 import { useFetchAll } from '@/hooks/useFetchAll';
 import {
   uploadImages,
   insertRecipeCategories,
   fetch,
   fetchAll,
+  RecipeRecord,
+  deleteRecipeCategories,
 } from '@/services/supabase_service';
 import { Json } from '@/models/json';
 import AuthenticatedPage from '@/components/authenticated_page/authenticated_page';
+import { useUpdateRecipe } from '@/hooks/useUpdateRecipe';
 
 interface Ingredient {
   name: string;
@@ -78,6 +80,8 @@ function UpdateRecipeClient() {
       mode: 'onChange',
     });
 
+  const [initialCategories, setInitialCategories] = useState<number[]>([]);
+
   // Field arrays for structured fields
   const {
     fields: ingredientFields,
@@ -120,7 +124,7 @@ function UpdateRecipeClient() {
       }),
     ) || [];
 
-  const { mutateAsync, isPending } = useInsertRecipe();
+  const { mutateAsync, isPending } = useUpdateRecipe();
   const [difficulty, setDifficulty] = useState<number>(0);
 
   // Handle Difficulty Change
@@ -174,11 +178,11 @@ function UpdateRecipeClient() {
 
           // Use reset to fill in the form
           reset(completeData);
-          console.log('Reset form with:', completeData); // Verify the reset data
-
-          // Also set the difficulty
+          setInitialCategories(completeData.categories);
+          // Check if really needed to set difficulty again amnually
           setDifficulty(completeData.difficulty); // Set difficulty from fetched recipe data
           setValue('difficulty', completeData.difficulty); // Ensure it reflects in the form state
+          console.log('Reset form with:', completeData); // Verify the reset data
         })
         .catch((error) => {
           console.error('Error fetching recipe:', error);
@@ -201,34 +205,58 @@ function UpdateRecipeClient() {
       }
     }
 
+    // Exclude categories from the update payload.
     const { categories, ...recipeData } = values;
-
     // Auto-calculate total_time as prep_time + cook_time (default cook_time to 0 if undefined)
     const computedTotalTime = values.prep_time + (values.cook_time ?? 0);
 
     const recipePayload = {
-      ...recipeData,
-      total_time: computedTotalTime,
-      ingredients: values.ingredients as unknown as Json,
-      directions: values.directions as unknown as Json,
-      notes: values.notes as unknown as Json,
-      images: imageUrls,
+      recipeId: recipeId, // Add the missing recipeId
+      data: {
+        total_time: computedTotalTime,
+        ingredients: values.ingredients as unknown as Json,
+        directions: values.directions as unknown as Json,
+        notes: values.notes as unknown as Json,
+        images: imageUrls,
+        user_id: recipeData.user_id, // You may need to include user_id if it's part of RecipeInput
+        name: recipeData.name, // Include other necessary fields
+        difficulty: recipeData.difficulty,
+        prep_time: recipeData.prep_time,
+        cook_time: recipeData.cook_time,
+        servings: recipeData.servings,
+        shared: recipeData.shared,
+        videos: recipeData.videos,
+      } as RecipeRecord, // Cast to the appropriate type if necessary
     };
 
     try {
-      const recipeDataResponse = await mutateAsync(recipePayload);
-      const newRecipe = Array.isArray(recipeDataResponse)
-        ? recipeDataResponse[0]
-        : recipeDataResponse;
+      const updatedData = await mutateAsync(recipePayload);
+      const updatedRecipe = Array.isArray(updatedData)
+        ? updatedData[0]
+        : updatedData;
 
-      if (categories.length > 0 && newRecipe?.id) {
-        await insertRecipeCategories(newRecipe.id, categories);
+      // Differential update for join records:
+      const newCategories = categories;
+      const categoriesToAdd = newCategories.filter(
+        (cat) => !initialCategories.includes(cat),
+      );
+      const categoriesToRemove = initialCategories.filter(
+        (cat) => !newCategories.includes(cat),
+      );
+
+      if (updatedRecipe?.id) {
+        if (categoriesToRemove.length > 0) {
+          await deleteRecipeCategories(updatedRecipe.id, categoriesToRemove);
+        }
+        if (categoriesToAdd.length > 0) {
+          await insertRecipeCategories(updatedRecipe.id, categoriesToAdd);
+        }
       }
       reset();
-      router.push(`/recipe_page?id=${newRecipe?.id}`);
+      router.push(`/recipe_page?id=${updatedRecipe?.id}`);
     } catch (error) {
-      console.error('Error inserting recipe or categories:', error);
-      alert('Failed to insert recipe');
+      console.error('Error updating recipe or categories:', error);
+      alert('Failed to update recipe');
     }
   };
 
